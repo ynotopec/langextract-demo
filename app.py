@@ -1,175 +1,173 @@
-import io
+# app.py — Streamlit PDF → LangExtract (OpenAI-only via env + base_url)
+# Lancer : python -m streamlit run app.py
+
 import os
-import tempfile
+import io
 import textwrap
-
-import langextract as lx
-import pdfplumber
+import tempfile
 import streamlit as st
+import pdfplumber
 
+# ==== Variables d'environnement requises ====
 OPENAI_API_MODEL = os.getenv("OPENAI_API_MODEL", "mistral-small-vllm")
-OPENAI_API_BASE = os.getenv("OPENAI_API_BASE", "http://localhost:8000/v1")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_API_BASE  = os.getenv("OPENAI_API_BASE", "http://localhost:8000/v1")
+OPENAI_API_KEY   = os.getenv("OPENAI_API_KEY")
 
+# ==== Importer LangExtract après avoir lu l'env ====
+import langextract as lx
+
+# Optionnel mais utile pour VRAIMENT forcer OpenAI :
+# (présent depuis les versions 1.0.3+)
 try:
     from langextract import inference as lxi
-
-    OPENAI_MODEL_TYPE = getattr(lxi, "OpenAILanguageModel", None)
+    OpenAILM = getattr(lxi, "OpenAILanguageModel", None)
 except Exception:
-    OPENAI_MODEL_TYPE = None
+    OpenAILM = None  # on restera sur l'auto-résolution + api_key + base_url
 
-st.set_page_config(page_title="PDF → LangExtract", page_icon="📄", layout="wide")
-st.title("📄 PDF → LangExtract")
+# ==== UI Streamlit ====
+st.set_page_config(page_title="PDF → LangExtract (OpenAI-only)", page_icon="📄", layout="wide")
+st.title("📄 PDF → LangExtract — OpenAI (endpoint compatible)")
 
-
-def mask_secret(secret: str | None) -> str:
-    if not secret:
-        return "(missing)"
-    return secret[:4] + "…" + secret[-4:] if len(secret) > 8 else "****"
-
+def _mask(s: str | None) -> str:
+    if not s: return "(absent)"
+    return s[:4] + "…" + s[-4:] if len(s) > 8 else "****"
 
 with st.sidebar:
-    st.header("Environment")
-    st.write(f"**OPENAI_API_MODEL**: `{OPENAI_API_MODEL}`")
-    st.write(f"**OPENAI_API_BASE**: `{OPENAI_API_BASE}`")
-    st.write(f"**OPENAI_API_KEY**: `{mask_secret(OPENAI_API_KEY)}`")
+    st.header("Environnement")
+    st.write(f"**OPENAI_API_MODEL** = `{OPENAI_API_MODEL}`")
+    st.write(f"**OPENAI_API_BASE**  = `{OPENAI_API_BASE}`")
+    st.write(f"**OPENAI_API_KEY**   = `{_mask(OPENAI_API_KEY)}`")
     st.divider()
-    extraction_passes = st.slider("Extraction passes", 1, 5, 2)
+    passes = st.slider("Extraction passes", 1, 5, 2)
     max_workers = st.slider("Max workers", 1, 24, 8)
     max_char_buffer = st.slider("Max char buffer", 500, 4000, 1200, step=100)
-    show_raw_text = st.checkbox("Show extracted text", value=False)
+    show_raw_text = st.checkbox("Afficher le texte extrait", value=False)
+    st.caption("Si le PDF est scanné, faites un OCR en amont (ex: ocrmypdf).")
 
-DEFAULT_PROMPT = textwrap.dedent(
-    """\
-    Task: extract business entities from a PDF (French/English).
-    Rules:
-    - Use exact text spans only.
-    - No overlapping spans.
-    - Useful attributes if present: date, amount, currency, email, IBAN, SIREN/SIRET, address, phone.
-    - Classes: person, org, invoice, date, amount, email, iban, address, phone, ref.
-    - Do not invent missing data.
-    """
-)
-
-st.subheader("Extraction instructions")
-prompt = st.text_area("Prompt", value=DEFAULT_PROMPT, height=200)
+# ==== Prompt & few-shot par défaut ====
+default_prompt = textwrap.dedent("""\
+    Tâche: extraire des entités business d'un PDF (français/anglais).
+    RÈGLES:
+    - Utiliser le texte exact (pas de paraphrase).
+    - Pas de chevauchement de spans.
+    - Attributs utiles si présents: date, montant, devise, email, IBAN, SIREN/SIRET, adresse, téléphone.
+    - Classes possibles: person, org, invoice, date, amount, email, iban, address, phone, ref.
+    - Ne rien inventer si absent.
+""")
+st.subheader("Instructions d’extraction")
+prompt = st.text_area("Prompt", value=default_prompt, height=200)
 
 examples = [
     lx.data.ExampleData(
         text="FACTURE n° 2024-0915 — Client: ACME SAS — Montant: 1 250,00 EUR — Contact: billing@acme.fr — IBAN: FR76 3000 6000 0112 3456 7890 189",
         extractions=[
-            lx.data.Extraction(
-                extraction_class="invoice",
-                extraction_text="FACTURE n° 2024-0915",
-                attributes={"number": "2024-0915"},
-            ),
+            lx.data.Extraction(extraction_class="invoice", extraction_text="FACTURE n° 2024-0915", attributes={"number": "2024-0915"}),
             lx.data.Extraction(extraction_class="org", extraction_text="ACME SAS"),
-            lx.data.Extraction(
-                extraction_class="amount",
-                extraction_text="1 250,00 EUR",
-                attributes={"value": "1250.00", "currency": "EUR"},
-            ),
+            lx.data.Extraction(extraction_class="amount", extraction_text="1 250,00 EUR", attributes={"value": "1250.00", "currency": "EUR"}),
             lx.data.Extraction(extraction_class="email", extraction_text="billing@acme.fr"),
-            lx.data.Extraction(
-                extraction_class="iban", extraction_text="FR76 3000 6000 0112 3456 7890 189"
-            ),
+            lx.data.Extraction(extraction_class="iban", extraction_text="FR76 3000 6000 0112 3456 7890 189"),
         ],
     )
 ]
 
+# ==== Upload PDF ====
 st.subheader("PDF")
-pdf_file = st.file_uploader("Upload a PDF", type=["pdf"])
+pdf_file = st.file_uploader("Déposez un PDF", type=["pdf"])
 
-
-def pdf_to_text(file_data: bytes) -> str:
-    pages: list[str] = []
-    with pdfplumber.open(io.BytesIO(file_data)) as pdf:
-        for index, page in enumerate(pdf.pages, start=1):
-            page_text = page.extract_text() or ""
-            if page_text.strip():
-                pages.append(f"[PAGE {index}]\n{page_text}")
-    return "\n\n".join(pages)
-
+def pdf_to_text(fp: io.BytesIO) -> str:
+    chunks = []
+    with pdfplumber.open(fp) as pdf:
+        for i, page in enumerate(pdf.pages, start=1):
+            try:
+                t = page.extract_text() or ""
+            except Exception:
+                t = ""
+            if t.strip():
+                chunks.append(f"[PAGE {i}]\n{t}")
+    return "\n\n".join(chunks)
 
 def missing_env() -> list[str]:
-    checks = [
+    return [n for n, v in [
         ("OPENAI_API_MODEL", OPENAI_API_MODEL),
-        ("OPENAI_API_BASE", OPENAI_API_BASE),
-        ("OPENAI_API_KEY", OPENAI_API_KEY),
-    ]
-    return [name for name, value in checks if not value]
+        ("OPENAI_API_BASE",  OPENAI_API_BASE),
+        ("OPENAI_API_KEY",   OPENAI_API_KEY),
+    ] if not v]
 
-
-if st.button("🚀 Run extraction", disabled=pdf_file is None):
-    missing = missing_env()
-    if missing:
-        st.error("Missing environment variables: " + ", ".join(missing))
+# ==== Action ====
+if st.button("🚀 Lancer l’extraction", disabled=pdf_file is None):
+    miss = missing_env()
+    if miss:
+        st.error("Variables manquantes: " + ", ".join(miss))
         st.stop()
 
-    with st.spinner("Reading PDF..."):
-        content = pdf_file.read() if pdf_file else b""
-        text = pdf_to_text(content) if content else ""
+    with st.spinner("Lecture du PDF…"):
+        raw = pdf_file.read() if pdf_file else b""
+        text = pdf_to_text(io.BytesIO(raw)) if raw else ""
         if not text.strip():
-            st.error("No text found. If this is a scanned PDF, run OCR first.")
+            st.error("Aucun texte détecté (PDF scanné ? faites un OCR d’abord).")
             st.stop()
 
     if show_raw_text:
-        with st.expander("Extracted text (preview)"):
-            st.text(text[:50000])
+        with st.expander("Texte extrait (aperçu)"):
+            st.text(text[:50_000] if len(text) > 50_000 else text)
 
-    extract_kwargs = {
-        "text_or_documents": text,
-        "prompt_description": prompt,
-        "examples": examples,
-        "model_id": OPENAI_API_MODEL,
-        "api_key": OPENAI_API_KEY,
-        "fence_output": True,
-        "use_schema_constraints": False,
-        "language_model_params": {"base_url": OPENAI_API_BASE},
-        "extraction_passes": extraction_passes,
-        "max_workers": max_workers,
-        "max_char_buffer": max_char_buffer,
-    }
-    if OPENAI_MODEL_TYPE is not None:
-        extract_kwargs["language_model_type"] = OPENAI_MODEL_TYPE
+    # ==== Appel LangExtract (OpenAI seulement) ====
+    # - On force le backend OpenAI via language_model_type quand dispo
+    # - On passe base_url pour cibler un endpoint OpenAI-compatible (vLLM, etc.)
+    extract_kwargs = dict(
+        text_or_documents=text,
+        prompt_description=prompt,
+        examples=examples,
+        model_id=OPENAI_API_MODEL,
+        api_key=OPENAI_API_KEY,          # clé OpenAI (ou proxy compatible)
+        fence_output=True,               # requis pour OpenAI
+        use_schema_constraints=False,    # recommandé pour OpenAI
+        language_model_params={"base_url": OPENAI_API_BASE},
+        extraction_passes=passes,
+        max_workers=max_workers,
+        max_char_buffer=max_char_buffer,
+    )
+    if OpenAILM is not None:
+        extract_kwargs["language_model_type"] = OpenAILM  # forcer le provider
 
-    with st.spinner("Running extraction..."):
+    with st.spinner("Extraction (OpenAI)…"):
         try:
             result = lx.extract(**extract_kwargs)
-        except Exception as exc:
-            st.error(f"Inference failed: {exc}")
+        except Exception as e:
+            st.error(f"Échec d'inférence: {e}")
             st.stop()
 
-    with tempfile.TemporaryDirectory() as temp_dir:
-        jsonl_path = os.path.join(temp_dir, "extractions.jsonl")
-        lx.io.save_annotated_documents([result], output_name="extractions.jsonl", output_dir=temp_dir)
-
+    # ==== Sorties ====
+    with tempfile.TemporaryDirectory() as tmpd:
+        jsonl_path = os.path.join(tmpd, "extractions.jsonl")
+        lx.io.save_annotated_documents([result], output_name="extractions.jsonl", output_dir=tmpd)
         html = lx.visualize(jsonl_path)
-        html_content = html.data if hasattr(html, "data") else html
-        html_bytes = html_content.encode("utf-8")
+        html_bytes = (html.data if hasattr(html, "data") else html).encode("utf-8")
 
-        st.success("Extraction complete ✅")
-        st.subheader("JSON summary")
-        st.json(result.model_dump() if hasattr(result, "model_dump") else result)
+        st.success("Extraction terminée ✅")
+        st.subheader("Résumé JSON")
+        try:
+            st.json(result.model_dump() if hasattr(result, "model_dump") else result)
+        except Exception:
+            st.write(result)
 
-        col1, col2 = st.columns(2)
-        with col1:
-            with open(jsonl_path, "rb") as handle:
-                st.download_button(
-                    "⬇️ Download JSONL",
-                    data=handle.read(),
-                    file_name="extractions.jsonl",
-                    mime="application/jsonl",
-                    use_container_width=True,
-                )
-        with col2:
+        c1, c2 = st.columns(2)
+        with c1:
             st.download_button(
-                "⬇️ Download visualization (HTML)",
+                "⬇️ Télécharger JSONL",
+                data=open(jsonl_path, "rb").read(),
+                file_name="extractions.jsonl",
+                mime="application/jsonl",
+                use_container_width=True,
+            )
+        with c2:
+            st.download_button(
+                "⬇️ Télécharger la visualisation (HTML)",
                 data=html_bytes,
-                file_name="visualization_langextract.html",
+                file_name="visualisation_langextract.html",
                 mime="text/html",
                 use_container_width=True,
             )
 
-        st.subheader("Visualization preview")
-        st.components.v1.html(html_content, height=520, scrolling=True)
+        st.subheader("Aperçu de la visualisation")
+        st.components.v1.html(html_bytes.decode("utf-8"), height=520, scrolling=True)
