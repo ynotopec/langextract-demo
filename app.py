@@ -4,19 +4,13 @@ import tempfile
 import textwrap
 
 import langextract as lx
+from langextract import factory as lxf
 import pdfplumber
 import streamlit as st
 
 OPENAI_API_MODEL = os.getenv("OPENAI_API_MODEL", "mistral-small-vllm")
 OPENAI_API_BASE = os.getenv("OPENAI_API_BASE", "http://localhost:8000/v1")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-try:
-    from langextract import inference as lxi
-
-    OPENAI_MODEL_TYPE = getattr(lxi, "OpenAILanguageModel", None)
-except Exception:
-    OPENAI_MODEL_TYPE = None
 
 st.set_page_config(page_title="PDF → LangExtract", page_icon="📄", layout="wide")
 st.title("📄 PDF → LangExtract")
@@ -30,6 +24,7 @@ def mask_secret(secret: str | None) -> str:
 
 with st.sidebar:
     st.header("Environment")
+    st.write("**Provider**: `openai` (forced for OpenAI-compatible endpoints like SGLang)")
     st.write(f"**OPENAI_API_MODEL**: `{OPENAI_API_MODEL}`")
     st.write(f"**OPENAI_API_BASE**: `{OPENAI_API_BASE}`")
     st.write(f"**OPENAI_API_KEY**: `{mask_secret(OPENAI_API_KEY)}`")
@@ -100,6 +95,20 @@ def missing_env() -> list[str]:
     return [name for name, value in checks if not value]
 
 
+def format_inference_error(exc: Exception) -> str:
+    """Return a clearer, actionable inference error message for known providers."""
+    message = str(exc)
+    lowered = message.lower()
+    if "ollama" in lowered and ("can't find" in lowered or "not found" in lowered):
+        return (
+            f"{message}\n\n"
+            "Detected Ollama model lookup failure. Pull the model first, then retry:\n"
+            f"  ollama pull {OPENAI_API_MODEL}\n"
+            f"  ollama run {OPENAI_API_MODEL}"
+        )
+    return message
+
+
 if st.button("🚀 Run extraction", disabled=pdf_file is None):
     missing = missing_env()
     if missing:
@@ -121,23 +130,23 @@ if st.button("🚀 Run extraction", disabled=pdf_file is None):
         "text_or_documents": text,
         "prompt_description": prompt,
         "examples": examples,
-        "model_id": OPENAI_API_MODEL,
-        "api_key": OPENAI_API_KEY,
+        "config": lxf.ModelConfig(
+            model_id=OPENAI_API_MODEL,
+            provider="openai",
+            provider_kwargs={"base_url": OPENAI_API_BASE, "api_key": OPENAI_API_KEY},
+        ),
         "fence_output": True,
         "use_schema_constraints": False,
-        "language_model_params": {"base_url": OPENAI_API_BASE},
         "extraction_passes": extraction_passes,
         "max_workers": max_workers,
         "max_char_buffer": max_char_buffer,
     }
-    if OPENAI_MODEL_TYPE is not None:
-        extract_kwargs["language_model_type"] = OPENAI_MODEL_TYPE
 
     with st.spinner("Running extraction..."):
         try:
             result = lx.extract(**extract_kwargs)
         except Exception as exc:
-            st.error(f"Inference failed: {exc}")
+            st.error(f"Inference failed: {format_inference_error(exc)}")
             st.stop()
 
     with tempfile.TemporaryDirectory() as temp_dir:
