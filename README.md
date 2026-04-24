@@ -37,6 +37,20 @@ cp .env.example .env
 
 Les variables optionnelles restent commentées avec `#` dans `.env.example`.
 
+### Option de compatibilité JSON mode
+
+Par défaut, la démo active `USE_OPENAI_JSON_MODE=0` (mode YAML côté `langextract`) car
+certains endpoints OpenAI-compatibles renvoient une erreur du type:
+
+- `"src property must be a valid json object"`
+
+Si votre endpoint supporte correctement `response_format={"type":"json_object"}`,
+vous pouvez activer:
+
+```bash
+export USE_OPENAI_JSON_MODE=1
+```
+
 ## Installation (idempotente)
 
 ```bash

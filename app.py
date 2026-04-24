@@ -11,6 +11,7 @@ import streamlit as st
 OPENAI_API_MODEL = os.getenv("OPENAI_API_MODEL", "mistral-small-vllm")
 OPENAI_API_BASE = os.getenv("OPENAI_API_BASE", "http://localhost:8000/v1")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+USE_OPENAI_JSON_MODE = os.getenv("USE_OPENAI_JSON_MODE", "0") in {"1", "true", "yes"}
 
 st.set_page_config(page_title="PDF → LangExtract", page_icon="📄", layout="wide")
 st.title("📄 PDF → LangExtract")
@@ -28,6 +29,7 @@ with st.sidebar:
     st.write(f"**OPENAI_API_MODEL**: `{OPENAI_API_MODEL}`")
     st.write(f"**OPENAI_API_BASE**: `{OPENAI_API_BASE}`")
     st.write(f"**OPENAI_API_KEY**: `{mask_secret(OPENAI_API_KEY)}`")
+    st.write(f"**USE_OPENAI_JSON_MODE**: `{USE_OPENAI_JSON_MODE}`")
     st.divider()
     extraction_passes = st.slider("Extraction passes", 1, 5, 2)
     max_workers = st.slider("Max workers", 1, 24, 8)
@@ -106,6 +108,13 @@ def format_inference_error(exc: Exception) -> str:
             f"  ollama pull {OPENAI_API_MODEL}\n"
             f"  ollama run {OPENAI_API_MODEL}"
         )
+    if "src property must be a valid json object" in lowered:
+        return (
+            f"{message}\n\n"
+            "Your endpoint rejected OpenAI JSON mode. This app now uses YAML mode by default "
+            "for OpenAI-compatible servers (SGLang/vLLM/TGI). Keep `USE_OPENAI_JSON_MODE=0` "
+            "or unset it, then retry."
+        )
     return message
 
 
@@ -130,6 +139,7 @@ if st.button("🚀 Run extraction", disabled=pdf_file is None):
         "text_or_documents": text,
         "prompt_description": prompt,
         "examples": examples,
+        "format_type": lx.data.FormatType.JSON if USE_OPENAI_JSON_MODE else lx.data.FormatType.YAML,
         "config": lxf.ModelConfig(
             model_id=OPENAI_API_MODEL,
             provider="openai",
