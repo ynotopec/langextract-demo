@@ -85,3 +85,32 @@ ExecStart=/bin/bash -lc 'cd /opt/langextract-demo && source run.sh 0.0.0.0 8501'
 ## Notes H100 / DGX Spark
 
 L'application consomme un endpoint OpenAI-compatible. Pour H100/DGX Spark, la compatibilité dépend surtout de votre couche de serving (ex: vLLM) et du modèle exposé dans `OPENAI_API_MODEL`/`OPENAI_API_BASE`.
+
+## Dépannage (Ollama)
+
+Si vous voyez une erreur du type:
+
+- `Inference failed: Ollama API error: Can't find Ollama <model>`
+
+alors le modèle n'est pas encore présent localement dans Ollama. Téléchargez-le puis relancez:
+
+```bash
+ollama pull <model>
+ollama run <model>
+```
+
+Exemple pour `qwen3.6`:
+
+```bash
+ollama pull qwen3.6
+ollama run qwen3.6
+```
+
+## SGLang (important)
+
+Si vous utilisez un endpoint OpenAI-compatible (SGLang/vLLM/TGI) avec un modèle
+comme `qwen...`, certaines versions de `langextract` peuvent router ce nom de
+modèle vers le provider Ollama par défaut.
+
+Cette démo force explicitement le provider `openai` dans `app.py` pour éviter
+ce comportement et fonctionner correctement avec SGLang.
