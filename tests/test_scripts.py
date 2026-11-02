@@ -58,3 +58,63 @@ esac
             "8997",
             "--no-access-log",
         ]
+
+
+@pytest.mark.parametrize(
+    "version,accepted",
+    [
+        ("18.19.1", False),
+        ("20.19.0", False),
+        ("22.22.2", False),
+        ("24.14.0", False),
+        ("24.15.0", True),
+        ("25.0.0", False),
+        ("26.0.0", True),
+    ],
+)
+def test_install_checks_node_before_any_dependency_install(tmp_path, version, accepted):
+    import json
+    import shutil
+
+    real_node = shutil.which("node")
+    if real_node is None:
+        pytest.skip("Node is tested by the frontend CI job")
+    project = Path(__file__).resolve().parents[1]
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    node = bin_dir / "node"
+    node.write_text(
+        "#!/usr/bin/env python3\nimport subprocess,sys\n"
+        f'if sys.argv[1] == "--version": print("v{version}")\n'
+        "else:\n"
+        f"    prefix = \"Object.defineProperty(process.versions, 'node', {{value: '{version}'}});\"\n"
+        f'    sys.exit(subprocess.run([{json.dumps(real_node)}, "-e", prefix + sys.argv[2]]).returncode)\n'
+    )
+    node.chmod(0o755)
+    for name in ("npm", "uv"):
+        stub = bin_dir / name
+        stub.write_text(
+            '#!/usr/bin/env bash\nprintf called > "$INSTALL_MARKER"\nexit 99\n'
+        )
+        stub.chmod(0o755)
+    marker = tmp_path / "called"
+    env = dict(
+        os.environ,
+        PATH=f"{bin_dir}:{os.environ['PATH']}",
+        UV_BIN=str(bin_dir / "uv"),
+        INSTALL_MARKER=str(marker),
+    )
+    result = subprocess.run(
+        ["bash", str(project / "install.sh")],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if accepted:
+        assert result.returncode == 99  # npm reached, no real package installation.
+        assert marker.exists()
+    else:
+        assert result.returncode == 1
+        assert "incompatible" in result.stderr
+        assert not marker.exists()

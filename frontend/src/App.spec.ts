@@ -52,6 +52,7 @@ describe('document extraction', () => {
     expect(wrapper.text()).toContain('Pages ignorées : 2')
     expect(wrapper.findAll('a[download]')).toHaveLength(2)
     expect(wrapper.find('script').exists()).toBe(false)
+    expect(wrapper.html()).toContain('&lt;script&gt;evil()&lt;/script&gt;')
     expect(wrapper.find('iframe').exists()).toBe(false)
     expect(wrapper.get('tbody').text()).toContain('<script>evil()</script>')
     await wrapper.findAll('button').find(button => button.text() === 'Se déconnecter')!.trigger('click')

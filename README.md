@@ -6,7 +6,7 @@ Vue 3 + TypeScript + VueDsfr, servies sur **le même port**.
 
 ## Installation
 
-Prérequis : Python ≥ 3.10, Node.js ≥ 22.12, npm et un endpoint OpenAI-compatible.
+Prérequis : Python ≥ 3.10, Node.js 24 ≥ 24.15.0 (ou ≥ 26), npm et un endpoint OpenAI-compatible.
 `install.sh` installe `uv` si nécessaire et utilise par défaut
 `~/venv/<nom-du-projet>` (`VENV_DIR` permet de choisir un autre emplacement).
 
@@ -17,6 +17,16 @@ python3 -c 'import secrets; print(secrets.token_urlsafe(32))'
 ./install.sh
 source run.sh 127.0.0.1 8501
 ```
+
+Si le Node système est trop ancien (par exemple Node 18 sous Ubuntu), construire
+avec un Node 24 temporaire sans modifier l’installation système :
+
+```bash
+npx --yes --package=node@24 -c './install.sh'
+```
+
+Node n’est ensuite pas nécessaire pour servir le frontend déjà construit.
+`install.sh` vérifie la version avant toute installation de dépendances.
 
 Ouvrir `http://127.0.0.1:8501`, saisir le token puis déposer un PDF.
 `bash run.sh [IP] [PORT]` et `start.sh` fonctionnent aussi ; `upgrade.sh` actualise
@@ -122,6 +132,10 @@ de skills à l’exécution. L’interface est en français, avec labels, naviga
 clavier, lien d’évitement et annonces de statut. Aucun audit RGAA complet
 n’a été réalisé ; aucune conformité réglementaire n’est revendiquée.
 
+L’audit npm couvre aussi les outils de développement. Vitest est en version
+corrigée ; des overrides limités à `js-beautify` (dépendance des tests Vue)
+imposent `glob` ≥14.0.2 et `minimatch` ≥11.0.1 en attendant leur adoption amont.
+
 Pour développer séparément : lancer l’API sur 8501, puis `cd frontend && npm ci
 && npm run dev`. Le proxy Vite relaie `/api` vers le backend local ; aucun CORS
 ouvert n’est nécessaire.
@@ -140,7 +154,7 @@ cd frontend
 npm ci
 npm test
 npm run build
-npm audit --omit=dev --audit-level=high
+npm audit --audit-level=moderate
 ```
 
 Les tests backend couvrent l’authentification, l’upload borné (y compris sans
