@@ -1,20 +1,29 @@
 [project]
 name = "langextract-demo"
-version = "0.1.0"
-description = "Streamlit demo for PDF extraction with langextract"
+version = "0.2.0"
+description = "FastAPI and VueDsfr application for PDF extraction"
 requires-python = ">=3.10"
 dependencies = [
   "langextract[openai]>=1.7.1,<2",
   "pdfplumber>=0.11.0",
-  "streamlit>=1.40.0",
+  "fastapi>=0.115,<1",
+  "uvicorn>=0.30,<1",
+  "python-multipart>=0.0.18",
+  "python-dotenv>=1,<2",
 ]
 
 [build-system]
 requires = ["hatchling>=1.24.0"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build]
+artifacts = ["frontend/dist/**"]
+
 [tool.hatch.build.targets.wheel]
-only-include = ["app.py", "extraction_support.py"]
+only-include = ["app.py", "extraction_support.py", "extraction_service.py", "frontend/dist"]
 
 [tool.hatch.build.targets.sdist]
-include = ["app.py", "extraction_support.py", "README.md", "pyproject.toml"]
+include = ["app.py", "extraction_support.py", "extraction_service.py", "frontend", "README.md", "pyproject.toml"]
+
+[dependency-groups]
+dev = ["pytest>=8", "httpx[socks]>=0.27", "ruff>=0.9"]
