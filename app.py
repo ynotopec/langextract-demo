@@ -21,6 +21,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.datastructures import UploadFile
 from starlette.formparsers import MultiPartException, MultiPartParser
 
+from extraction_errors import PDFInputError, diagnose_extraction
 from extraction_service import DEFAULT_PROMPT, extract_pdf
 
 logger = logging.getLogger("langextract.api")
@@ -266,25 +267,10 @@ def create_app(settings: Settings | None = None, frontend_dir: Path | None = Non
                     return await run_in_threadpool(
                         extract_pdf, content, options, config
                     )
-                except ValueError as exc:
-                    # Only PDF/size errors raised by our service are safe to expose.
-                    if str(exc).startswith(
-                        (
-                            "Impossible de lire ce PDF",
-                            "Aucun texte trouvé",
-                            "Le texte du PDF",
-                        )
-                    ):
-                        raise HTTPException(422, str(exc)) from None
-                    raise HTTPException(
-                        502,
-                        "Échec de l’extraction. Vérifiez le modèle et son format de sortie côté serveur.",
-                    ) from None
-                except Exception:  # noqa: BLE001 - normalize arbitrary provider errors without leaking secrets
-                    raise HTTPException(
-                        502,
-                        "Échec de l’inférence. Vérifiez le fournisseur et USE_OPENAI_JSON_MODE côté serveur.",
-                    ) from None
+                except PDFInputError as exc:
+                    raise HTTPException(422, str(exc)) from None
+                except Exception as exc:  # noqa: BLE001 - classify provider/library errors without leaking their content
+                    raise diagnose_extraction(exc, logger) from None
 
             finally:
                 await form.close()

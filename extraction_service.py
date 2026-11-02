@@ -8,6 +8,7 @@ import textwrap
 import langextract as lx
 from langextract import factory as lxf
 
+from extraction_errors import PDFInputError, extraction_stage
 from extraction_support import NullSafeFormatHandler, pdf_to_text
 
 DEFAULT_PROMPT = textwrap.dedent(
@@ -55,49 +56,54 @@ def extract_pdf(content: bytes, options, settings) -> dict:
     try:
         text, skipped_pages = pdf_to_text(content)
     except Exception as exc:
-        raise ValueError(
+        raise PDFInputError(
             "Impossible de lire ce PDF : fichier invalide, chiffré ou endommagé."
         ) from exc
     if not text.strip():
-        raise ValueError("Aucun texte trouvé. Un OCR peut être nécessaire en amont.")
+        raise PDFInputError("Aucun texte trouvé. Un OCR peut être nécessaire en amont.")
     if len(text) > settings.max_text_chars:
-        raise ValueError("Le texte du PDF dépasse la limite de caractères autorisée.")
+        raise PDFInputError(
+            "Le texte du PDF dépasse la limite de caractères autorisée."
+        )
     output_format = (
         lx.data.FormatType.JSON if settings.json_mode else lx.data.FormatType.YAML
     )
     handler = NullSafeFormatHandler(format_type=output_format, use_fences=True)
-    result = lx.extract(
-        text_or_documents=text,
-        prompt_description=options.prompt,
-        examples=EXAMPLES,
-        format_type=output_format,
-        resolver_params={"format_handler": handler, "suppress_parse_errors": False},
-        config=lxf.ModelConfig(
-            model_id=settings.model,
-            provider="openai",
-            provider_kwargs={
-                "base_url": settings.base_url,
-                "api_key": settings.model_key,
-                "format_type": output_format,
-                "max_workers": options.max_workers,
-            },
-        ),
-        fence_output=True,
-        use_schema_constraints=False,
-        extraction_passes=options.extraction_passes,
-        max_workers=options.max_workers,
-        max_char_buffer=options.max_char_buffer,
-        show_progress=False,
-    )
-    with tempfile.TemporaryDirectory() as temp_dir:
+    with extraction_stage("inference"):
+        result = lx.extract(
+            text_or_documents=text,
+            prompt_description=options.prompt,
+            examples=EXAMPLES,
+            format_type=output_format,
+            resolver_params={"format_handler": handler, "suppress_parse_errors": False},
+            config=lxf.ModelConfig(
+                model_id=settings.model,
+                provider="openai",
+                provider_kwargs={
+                    "base_url": settings.base_url,
+                    "api_key": settings.model_key,
+                    "format_type": output_format,
+                    "max_workers": options.max_workers,
+                },
+            ),
+            fence_output=True,
+            use_schema_constraints=False,
+            extraction_passes=options.extraction_passes,
+            max_workers=options.max_workers,
+            max_char_buffer=options.max_char_buffer,
+            show_progress=False,
+        )
+    with extraction_stage("export"), tempfile.TemporaryDirectory() as temp_dir:
         path = os.path.join(temp_dir, "extractions.jsonl")
         lx.io.save_annotated_documents(
             [result], output_name="extractions.jsonl", output_dir=temp_dir
         )
         with open(path, encoding="utf-8") as handle:
             jsonl = handle.read()
-        html = lx.visualize(path)
+        with extraction_stage("visualization"):
+            html = lx.visualize(path)
         html = html.data if hasattr(html, "data") else html
+        document = json.loads(jsonl)
     warnings = []
     if skipped_pages:
         warnings.append(
@@ -110,7 +116,7 @@ def extract_pdf(content: bytes, options, settings) -> dict:
             f"{handler.omitted_entities} entité(s) nulles ignorées ; vérifiez le résultat."
         )
     return {
-        "document": json.loads(jsonl),
+        "document": document,
         "jsonl": jsonl,
         "html": html,
         "warnings": warnings,

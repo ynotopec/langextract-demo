@@ -271,3 +271,129 @@ def test_eight_character_tokens_with_each_required_category_are_accepted(
             ).status_code
             == 401
         )
+
+
+@pytest.mark.parametrize(
+    "status,message,category,hint,http_status",
+    [
+        (401, "secret upstream response", "provider_auth", "OPENAI_API_KEY", 502),
+        (403, "secret upstream response", "provider_auth", "OPENAI_API_KEY", 502),
+        (
+            404,
+            "secret upstream response",
+            "provider_not_found",
+            "OPENAI_API_MODEL",
+            502,
+        ),
+        (429, "secret upstream response", "provider_rate_limit", "quota", 503),
+        (
+            400,
+            "src property must be a valid JSON object",
+            "provider_json_mode",
+            "USE_OPENAI_JSON_MODE=0",
+            502,
+        ),
+        (
+            400,
+            "response_format json_object is not supported",
+            "provider_json_mode",
+            "USE_OPENAI_JSON_MODE=0",
+            502,
+        ),
+        (400, "maximum context length exceeded", "provider_context", "contexte", 502),
+        (400, "unknown invalid input", "provider_bad_request", "HTTP 400", 502),
+        (503, "secret upstream response", "provider_http", "HTTP 503", 502),
+    ],
+)
+def test_wrapped_provider_status_is_actionable_without_leaking(
+    client, status, message, category, hint, http_status
+):
+    import httpx
+    import openai
+    from langextract.core.exceptions import InferenceRuntimeError
+
+    provider_error = openai.APIStatusError(
+        message + CONFIG.model_key,
+        response=httpx.Response(
+            status,
+            request=httpx.Request(
+                "POST", "https://provider.invalid/v1/chat/completions"
+            ),
+        ),
+        body={"secret": CONFIG.model_key},
+    )
+    wrapped = InferenceRuntimeError(
+        "wrapper contains sensitive document", original=provider_error
+    )
+    with (
+        patch(
+            "extraction_service.pdf_to_text", return_value=("synthetic document", [])
+        ),
+        patch("extraction_service.lx.extract", side_effect=wrapped),
+        patch("app.logger.error") as logged,
+    ):
+        response = upload(client)
+    assert response.status_code == http_status
+    assert hint in response.json()["detail"]
+    diagnostic = json.loads(logged.call_args.args[0])
+    assert diagnostic["category"] == category
+    assert diagnostic["stage"] == "inference"
+    assert diagnostic["upstream_status"] == status
+    assert diagnostic["reference"] in response.json()["detail"]
+    assert "APIStatusError" in diagnostic["exception_types"]
+    assert diagnostic["frames"]
+    assert CONFIG.model_key not in response.text + logged.call_args.args[0]
+    assert "sensitive document" not in response.text + logged.call_args.args[0]
+
+
+@pytest.mark.parametrize(
+    "kind,category,http_status",
+    [
+        ("connection", "provider_connection", 502),
+        ("timeout", "provider_timeout", 504),
+        ("format", "model_output_format", 502),
+        ("dependency", "dependency_error", 500),
+    ],
+)
+def test_typed_inference_failures(client, kind, category, http_status):
+    import httpx
+    import openai
+    from langextract.resolver import ResolverParsingError
+
+    request = httpx.Request("POST", "https://provider.invalid/v1/chat/completions")
+    errors = {
+        "connection": openai.APIConnectionError(request=request),
+        "timeout": openai.APITimeoutError(request=request),
+        "format": ResolverParsingError("sensitive model output"),
+        "dependency": ImportError("sensitive path"),
+    }
+    with (
+        patch("extraction_service.pdf_to_text", return_value=("synthetic", [])),
+        patch("extraction_service.lx.extract", side_effect=errors[kind]),
+        patch("app.logger.error") as logged,
+    ):
+        response = upload(client)
+    assert response.status_code == http_status
+    assert json.loads(logged.call_args.args[0])["category"] == category
+    assert "sensitive" not in response.text + logged.call_args.args[0]
+
+
+@pytest.mark.parametrize(
+    "stage,target",
+    [
+        ("export", "extraction_service.lx.io.save_annotated_documents"),
+        ("visualization", "extraction_service.lx.visualize"),
+    ],
+)
+def test_post_inference_failure_reports_actual_stage(endpoint, tmp_path, stage, target):
+    url, _ = endpoint
+    with (
+        TestClient(create_app(replace(CONFIG, base_url=url), tmp_path)) as client,
+        patch("extraction_service.pdf_to_text", return_value=("ACME paid 42.", [])),
+        patch(target, side_effect=RuntimeError("secret document")),
+        patch("app.logger.error") as logged,
+    ):
+        response = upload(client)
+    assert response.status_code == 500
+    assert json.loads(logged.call_args.args[0])["stage"] == stage
+    assert "secret document" not in response.text + logged.call_args.args[0]

@@ -93,12 +93,31 @@ La réponse contient `document`, `jsonl`, `html`, `warnings`, `skipped_pages`,
 et le JSONL contiennent aussi le texte source nécessaire aux annotations.
 
 Codes principaux : `401` token absent/invalide ; `413` fichier/requête trop gros ;
-`415` format HTTP incorrect ; `422` PDF ou paramètres invalides ; `502` erreur
-fournisseur/extraction ; `503` extraction déjà en cours (`Retry-After: 5`).
+`415` format HTTP incorrect ; `422` PDF ou paramètres invalides ; `500` erreur
+locale de dépendance/export ; `502` erreur fournisseur/extraction ; `504` délai
+fournisseur dépassé ; `503` extraction déjà en cours ou quota fournisseur (`Retry-After: 5`).
 L’authentification et l’admission ont lieu **avant** lecture du corps et du PDF.
 Le corps est également borné sans `Content-Length` ; le parseur multipart limite
 le nombre de fichiers et de champs. Les fichiers temporaires sont fermés après
 traitement. Aucune extraction ni aucun historique ne sont persistés côté serveur.
+
+## Diagnostic des échecs
+
+Chaque échec d’inférence ou d’export affiche une référence de diagnostic et émet
+une ligne JSON `extraction_failed` dans les logs serveur. Cette ligne contient
+la même référence, l’étape (`inference`, `export`, `visualization`), la catégorie,
+le statut HTTP fournisseur s’il est disponible, les types d’exceptions et les
+positions dans le code (fichier/fonction/ligne). Elle exclut les messages bruts du
+fournisseur, ses corps de réponse, le contenu du PDF, les clés et les variables
+locales. Les erreurs encapsulées par LangExtract sont également inspectées.
+
+L’interface distingue connexion/TLS, authentification fournisseur, modèle ou
+endpoint absent, quota, délai, contexte trop long, rejet explicite du mode JSON,
+réponse mal formée et échec local des exports. `USE_OPENAI_JSON_MODE=0` est suggéré
+uniquement lorsqu’un rejet du mode JSON est identifié ; le mode ne change pas
+automatiquement. Pour une erreur inconnue, transmettre la ligne JSON
+`extraction_failed` correspondant à la référence, plutôt que les seuls logs
+`http_request` qui indiquent uniquement le statut et la durée.
 
 ## Fonctionnement conservé
 

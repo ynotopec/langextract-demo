@@ -20,10 +20,10 @@ build-backend = "hatchling.build"
 artifacts = ["frontend/dist/**"]
 
 [tool.hatch.build.targets.wheel]
-only-include = ["app.py", "extraction_support.py", "extraction_service.py", "frontend/dist"]
+only-include = ["app.py", "extraction_support.py", "extraction_service.py", "extraction_errors.py", "frontend/dist"]
 
 [tool.hatch.build.targets.sdist]
-include = ["app.py", "extraction_support.py", "extraction_service.py", "frontend", "README.md", "pyproject.toml"]
+include = ["app.py", "extraction_support.py", "extraction_service.py", "extraction_errors.py", "frontend", "README.md", "pyproject.toml"]
 
 [dependency-groups]
 dev = ["pytest>=8", "httpx[socks]>=0.27", "ruff>=0.9"]
