@@ -41,7 +41,7 @@ main() {
   fi
 
   echo "Syncing dependencies..."
-  "$UV_BIN" sync
+  UV_PROJECT_ENVIRONMENT="$VENV_DIR" "$UV_BIN" sync
 
   echo "Done."
   echo "VENV_DIR=$VENV_DIR"

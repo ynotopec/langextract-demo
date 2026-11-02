@@ -86,31 +86,45 @@ ExecStart=/bin/bash -lc 'cd /opt/langextract-demo && source run.sh 0.0.0.0 8501'
 
 L'application consomme un endpoint OpenAI-compatible. Pour H100/DGX Spark, la compatibilité dépend surtout de votre couche de serving (ex: vLLM) et du modèle exposé dans `OPENAI_API_MODEL`/`OPENAI_API_BASE`.
 
-## Dépannage (Ollama)
+## Extraction et compatibilité
 
-Si vous voyez une erreur du type:
+- Interface et instructions par défaut en français, comme sur `dev`.
+- Le provider `openai` est forcé via `ModelConfig` pour tous les noms de modèles,
+  y compris les alias tels que `ai-flash` (SGLang/vLLM).
+- Le format JSON utilisé par `dev` est conservé par défaut. Si l’endpoint rejette
+  le mode JSON (`src property must be a valid json object`), définir
+  `USE_OPENAI_JSON_MODE=0` dans `.env` puis redémarrer pour utiliser YAML.
+  Les exports restent JSONL et HTML dans les deux modes.
+- Les pages PDF illisibles ou sans texte sont signalées avec leur numéro et
+  ignorées. Un PDF scanné nécessite un OCR en amont ; aucun OCR n’est intégré.
 
-- `Inference failed: Ollama API error: Can't find Ollama <model>`
+### Entités nulles renvoyées par le modèle
 
-alors le modèle n'est pas encore présent localement dans Ollama. Téléchargez-le puis relancez:
+`Extraction text must be a string, integer, or float. Found: <class 'NoneType'>`
+indique qu’une valeur d’entité produite par le modèle vaut `null`. Le traitement
+peut se terminer malgré cette erreur, sans garantir que toutes les entités du
+segment ont été conservées.
+
+Le prompt demande d’omettre les entités absentes. Le parseur retire uniquement
+les entités nulles et leurs attributs associés, conserve les entités valides du
+même segment et affiche un avertissement avec le nombre d’entités ignorées.
+Un dictionnaire d’attributs `null` est valide et reste accepté. Les autres erreurs
+de structure interrompent explicitement l’extraction pour éviter un résultat
+partiel présenté comme complet.
+
+Cette adaptation utilise l’extension `FormatHandler` de LangExtract, sans modifier
+la bibliothèque ni ses logs. Elle requiert `langextract[openai]>=1.7.1,<2` ; lancer
+`./install.sh` pour synchroniser les dépendances. `dev` reste inchangée comme point
+de comparaison fonctionnel.
+
+## Tests
 
 ```bash
-ollama pull <model>
-ollama run <model>
+python -m pip install . pytest
+python -m pytest -q
 ```
 
-Exemple pour `qwen3.6`:
-
-```bash
-ollama pull qwen3.6
-ollama run qwen3.6
-```
-
-## SGLang (important)
-
-Si vous utilisez un endpoint OpenAI-compatible (SGLang/vLLM/TGI) avec un modèle
-comme `qwen...`, certaines versions de `langextract` peuvent router ce nom de
-modèle vers le provider Ollama par défaut.
-
-Cette démo force explicitement le provider `openai` dans `app.py` pour éviter
-ce comportement et fonctionner correctement avec SGLang.
+Les tests utilisent un endpoint OpenAI simulé localement : aucune clé réelle ni
+connexion à un fournisseur ne sont nécessaires. Ils couvrent JSON/YAML, les
+entités nulles, les erreurs de structure, les pages ignorées, les exports et
+l’interface Streamlit. Ils ne valident pas la qualité des réponses de votre modèle.
