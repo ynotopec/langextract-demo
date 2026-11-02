@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import secrets
+import string
 import time
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
@@ -76,12 +77,18 @@ def create_app(settings: Settings | None = None, frontend_dir: Path | None = Non
     @asynccontextmanager
     async def lifespan(app):
         config = settings or Settings.from_env()
+        token = config.api_token
         if (
-            len(config.api_token) < 32
-            or config.api_token == "replace-with-a-random-token-at-least-32-characters"
+            len(token) < 8
+            or not any(char in string.ascii_uppercase for char in token)
+            or not any(char in string.ascii_lowercase for char in token)
+            or not any(char in string.digits for char in token)
+            or not any(char in string.punctuation for char in token)
+            or any(char.isspace() for char in token)
         ):
             raise RuntimeError(
-                "API_TOKEN doit être un token aléatoire d’au moins 32 caractères."
+                "API_TOKEN doit contenir au moins 8 caractères, une majuscule, "
+                "une minuscule, un chiffre et un caractère spécial, sans espace."
             )
         if not config.model_key or not config.model or not config.base_url:
             raise RuntimeError(

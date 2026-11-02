@@ -12,7 +12,16 @@ Prérequis : Python ≥ 3.10, Node.js 24 ≥ 24.15.0 (ou ≥ 26), npm et un endp
 
 ```bash
 cp .env.example .env
-python3 -c 'import secrets; print(secrets.token_urlsafe(32))'
+python3 - <<'PYTOKEN'
+import secrets, string
+alphabet = string.ascii_letters + string.digits + "-_.~"
+while True:
+    token = "".join(secrets.choice(alphabet) for _ in range(24))
+    if all(any(c in group for c in token) for group in
+           (string.ascii_uppercase, string.ascii_lowercase, string.digits, "-_.~")):
+        print(token)
+        break
+PYTOKEN
 # Reporter le token généré dans API_TOKEN et configurer les trois OPENAI_API_*.
 ./install.sh
 source run.sh 127.0.0.1 8501
@@ -39,7 +48,7 @@ construit sont présents. Relancer `./install.sh` après une mise à jour du cod
 
 | Variable | Usage | Défaut |
 | --- | --- | --- |
-| `API_TOKEN` | Secret d’accès à l’API, aléatoire, ≥ 32 caractères | Obligatoire |
+| `API_TOKEN` | Secret d’accès à l’API, ≥ 8 caractères : majuscule, minuscule, chiffre, caractère spécial | Obligatoire |
 | `OPENAI_API_MODEL` | Nom ou alias du modèle | `mistral-small-vllm` |
 | `OPENAI_API_BASE` | Endpoint compatible OpenAI | `http://127.0.0.1:8000/v1` |
 | `OPENAI_API_KEY` | Clé du fournisseur, distincte du token API | Obligatoire |
@@ -48,6 +57,11 @@ construit sont présents. Relancer `./install.sh` après une mise à jour du cod
 | `MAX_TEXT_CHARS` | Taille maximale du texte avant inférence | `500000` |
 
 Le service refuse de démarrer sans token valide ou clé fournisseur.
+Le token doit contenir au moins 8 caractères, dont au moins une lettre majuscule
+ASCII, une minuscule ASCII, un chiffre et un caractère de ponctuation (par
+exemple `!`, `$`, `#`, `-` ou `_`), sans espace ni autre caractère blanc.
+Dans `.env`, entourer le token de guillemets simples si nécessaire pour préserver
+les caractères spéciaux. Ne pas réutiliser un exemple public comme secret.
 `.env` est chargé par Python, sans exécution shell ni interpolation de `${…}`.
 Les variables déjà définies dans l’environnement sont prioritaires.
 

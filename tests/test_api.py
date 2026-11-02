@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 from app import ExtractionOptions, Settings, create_app
 from extraction_service import extract_pdf
 
-TOKEN = "synthetic-api-test-token-000000000000"
+TOKEN = "Synthetic-api-test-token-000000000000"
 HEADERS = {"Authorization": f"Bearer {TOKEN}"}
 CONFIG = Settings(
     api_token=TOKEN,
@@ -69,7 +69,18 @@ def test_config_has_no_secrets_or_endpoint(client):
 
 
 @pytest.mark.parametrize(
-    "token", ["", "short", "replace-with-a-random-token-at-least-32-characters"]
+    "token",
+    [
+        "",
+        "Aa1!aaa",
+        "aa1!aaaa",
+        "AA1!AAAA",
+        "Aaa!aaaa",
+        "Aa12aaaa",
+        "Aa1! aaab",
+        "Aa1!aaa\t",
+        "replace-with-a-random-token-at-least-32-characters",
+    ],
 )
 def test_startup_fails_without_configured_token(token):
     with (
@@ -239,3 +250,24 @@ def test_static_frontend_and_api_not_found(tmp_path):
     with TestClient(create_app(CONFIG, tmp_path)) as client:
         assert "Frontend" in client.get("/").text
         assert client.get("/api/v1/missing", headers=HEADERS).status_code == 404
+
+
+@pytest.mark.parametrize(
+    "token", ["Aa1!aaaa", "Aa1$aaaa", "Aa1#aaaa", "Aa1~aaaa", "Aa1${aa}"]
+)
+def test_eight_character_tokens_with_each_required_category_are_accepted(
+    token, tmp_path
+):
+    with TestClient(create_app(replace(CONFIG, api_token=token), tmp_path)) as client:
+        assert (
+            client.get(
+                "/api/v1/config", headers={"Authorization": f"Bearer {token}"}
+            ).status_code
+            == 200
+        )
+        assert (
+            client.get(
+                "/api/v1/config", headers={"Authorization": f"Bearer {token}wrong"}
+            ).status_code
+            == 401
+        )
