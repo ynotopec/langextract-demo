@@ -1,16 +1,18 @@
-import io
+import json
 import os
 import tempfile
 import textwrap
 
 import langextract as lx
 from langextract import factory as lxf
-import pdfplumber
 import streamlit as st
+
+from extraction_support import NullSafeFormatHandler, pdf_to_text
 
 OPENAI_API_MODEL = os.getenv("OPENAI_API_MODEL", "mistral-small-vllm")
 OPENAI_API_BASE = os.getenv("OPENAI_API_BASE", "http://localhost:8000/v1")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+USE_OPENAI_JSON_MODE = os.getenv("USE_OPENAI_JSON_MODE", "1").strip().lower() in {"1", "true", "yes"}
 
 st.set_page_config(page_title="PDF → LangExtract", page_icon="📄", layout="wide")
 st.title("📄 PDF → LangExtract")
@@ -18,35 +20,37 @@ st.title("📄 PDF → LangExtract")
 
 def mask_secret(secret: str | None) -> str:
     if not secret:
-        return "(missing)"
+        return "(absent)"
     return secret[:4] + "…" + secret[-4:] if len(secret) > 8 else "****"
 
 
 with st.sidebar:
-    st.header("Environment")
-    st.write("**Provider**: `openai` (forced for OpenAI-compatible endpoints like SGLang)")
+    st.header("Environnement")
+    st.write("**Provider** : `openai` (endpoint compatible)")
     st.write(f"**OPENAI_API_MODEL**: `{OPENAI_API_MODEL}`")
     st.write(f"**OPENAI_API_BASE**: `{OPENAI_API_BASE}`")
     st.write(f"**OPENAI_API_KEY**: `{mask_secret(OPENAI_API_KEY)}`")
     st.divider()
-    extraction_passes = st.slider("Extraction passes", 1, 5, 2)
-    max_workers = st.slider("Max workers", 1, 24, 8)
-    max_char_buffer = st.slider("Max char buffer", 500, 4000, 1200, step=100)
-    show_raw_text = st.checkbox("Show extracted text", value=False)
+    extraction_passes = st.slider("Passes d’extraction", 1, 5, 2)
+    max_workers = st.slider("Requêtes parallèles", 1, 24, 8)
+    max_char_buffer = st.slider("Caractères par segment", 500, 4000, 1200, step=100)
+    show_raw_text = st.checkbox("Afficher le texte extrait", value=False)
 
 DEFAULT_PROMPT = textwrap.dedent(
     """\
-    Task: extract business entities from a PDF (French/English).
-    Rules:
-    - Use exact text spans only.
-    - No overlapping spans.
-    - Useful attributes if present: date, amount, currency, email, IBAN, SIREN/SIRET, address, phone.
-    - Classes: person, org, invoice, date, amount, email, iban, address, phone, ref.
-    - Do not invent missing data.
+    Tâche : extraire des entités métier depuis un PDF (français/anglais).
+    Règles :
+    - Utiliser uniquement des extraits exacts du texte.
+    - Ne pas faire chevaucher les extraits.
+    - Attributs utiles si présents : date, montant, devise, email, IBAN, SIREN/SIRET, adresse, téléphone.
+    - Classes : person, org, invoice, date, amount, email, iban, address, phone, ref.
+    - Ne pas inventer de données absentes.
+    - Omettre les entités absentes : ne jamais produire de valeur null ou vide.
+    - Si aucune entité n’est présente, retourner une liste extractions vide.
     """
 )
 
-st.subheader("Extraction instructions")
+st.subheader("Instructions d’extraction")
 prompt = st.text_area("Prompt", value=DEFAULT_PROMPT, height=200)
 
 examples = [
@@ -73,17 +77,7 @@ examples = [
 ]
 
 st.subheader("PDF")
-pdf_file = st.file_uploader("Upload a PDF", type=["pdf"])
-
-
-def pdf_to_text(file_data: bytes) -> str:
-    pages: list[str] = []
-    with pdfplumber.open(io.BytesIO(file_data)) as pdf:
-        for index, page in enumerate(pdf.pages, start=1):
-            page_text = page.extract_text() or ""
-            if page_text.strip():
-                pages.append(f"[PAGE {index}]\n{page_text}")
-    return "\n\n".join(pages)
+pdf_file = st.file_uploader("Déposez un PDF", type=["pdf"])
 
 
 def missing_env() -> list[str]:
@@ -99,41 +93,59 @@ def format_inference_error(exc: Exception) -> str:
     """Return a clearer, actionable inference error message for known providers."""
     message = str(exc)
     lowered = message.lower()
-    if "ollama" in lowered and ("can't find" in lowered or "not found" in lowered):
+    if "src property must be a valid json object" in lowered:
         return (
             f"{message}\n\n"
-            "Detected Ollama model lookup failure. Pull the model first, then retry:\n"
-            f"  ollama pull {OPENAI_API_MODEL}\n"
-            f"  ollama run {OPENAI_API_MODEL}"
+            "L’endpoint a rejeté le mode JSON. Essayez USE_OPENAI_JSON_MODE=0 "
+            "dans .env pour demander une sortie YAML."
         )
     return message
 
 
-if st.button("🚀 Run extraction", disabled=pdf_file is None):
+if st.button("🚀 Lancer l’extraction", disabled=pdf_file is None):
     missing = missing_env()
     if missing:
-        st.error("Missing environment variables: " + ", ".join(missing))
+        st.error("Variables d’environnement manquantes : " + ", ".join(missing))
         st.stop()
 
-    with st.spinner("Reading PDF..."):
+    with st.spinner("Lecture du PDF…"):
         content = pdf_file.read() if pdf_file else b""
-        text = pdf_to_text(content) if content else ""
+        try:
+            text, skipped_pages = pdf_to_text(content) if content else ("", [])
+        except Exception:
+            st.error("Impossible de lire ce PDF : fichier invalide, chiffré ou endommagé.")
+            st.stop()
+        if skipped_pages:
+            st.warning(
+                "Pages sans texte exploitable ou illisibles, ignorées : "
+                + ", ".join(map(str, skipped_pages))
+                + ". Un OCR peut être nécessaire."
+            )
         if not text.strip():
-            st.error("No text found. If this is a scanned PDF, run OCR first.")
+            st.error("Aucun texte trouvé. Si le PDF est scanné, effectuer un OCR au préalable.")
             st.stop()
 
     if show_raw_text:
-        with st.expander("Extracted text (preview)"):
+        with st.expander("Texte extrait (aperçu)"):
             st.text(text[:50000])
 
+    output_format = lx.data.FormatType.JSON if USE_OPENAI_JSON_MODE else lx.data.FormatType.YAML
+    handler = NullSafeFormatHandler(format_type=output_format, use_fences=True)
     extract_kwargs = {
         "text_or_documents": text,
         "prompt_description": prompt,
         "examples": examples,
+        "format_type": output_format,
+        "resolver_params": {"format_handler": handler, "suppress_parse_errors": False},
         "config": lxf.ModelConfig(
             model_id=OPENAI_API_MODEL,
             provider="openai",
-            provider_kwargs={"base_url": OPENAI_API_BASE, "api_key": OPENAI_API_KEY},
+            provider_kwargs={
+                "base_url": OPENAI_API_BASE,
+                "api_key": OPENAI_API_KEY,
+                "format_type": output_format,
+                "max_workers": max_workers,
+            },
         ),
         "fence_output": True,
         "use_schema_constraints": False,
@@ -142,12 +154,18 @@ if st.button("🚀 Run extraction", disabled=pdf_file is None):
         "max_char_buffer": max_char_buffer,
     }
 
-    with st.spinner("Running extraction..."):
+    with st.spinner("Extraction…"):
         try:
             result = lx.extract(**extract_kwargs)
         except Exception as exc:
-            st.error(f"Inference failed: {format_inference_error(exc)}")
+            st.error(f"Échec de l’inférence : {format_inference_error(exc)}")
             st.stop()
+
+    if handler.omitted_entities:
+        st.warning(
+            f"Le modèle a produit {handler.omitted_entities} entité(s) nulles, ignorées. "
+            "Les entités valides ont été conservées ; vérifiez le résultat."
+        )
 
     with tempfile.TemporaryDirectory() as temp_dir:
         jsonl_path = os.path.join(temp_dir, "extractions.jsonl")
@@ -157,15 +175,16 @@ if st.button("🚀 Run extraction", disabled=pdf_file is None):
         html_content = html.data if hasattr(html, "data") else html
         html_bytes = html_content.encode("utf-8")
 
-        st.success("Extraction complete ✅")
-        st.subheader("JSON summary")
-        st.json(result.model_dump() if hasattr(result, "model_dump") else result)
+        st.success("Extraction terminée ✅")
+        st.subheader("Résumé JSON")
+        with open(jsonl_path, encoding="utf-8") as handle:
+            st.json(json.loads(handle.readline()))
 
         col1, col2 = st.columns(2)
         with col1:
             with open(jsonl_path, "rb") as handle:
                 st.download_button(
-                    "⬇️ Download JSONL",
+                    "⬇️ Télécharger JSONL",
                     data=handle.read(),
                     file_name="extractions.jsonl",
                     mime="application/jsonl",
@@ -173,12 +192,12 @@ if st.button("🚀 Run extraction", disabled=pdf_file is None):
                 )
         with col2:
             st.download_button(
-                "⬇️ Download visualization (HTML)",
+                "⬇️ Télécharger la visualisation (HTML)",
                 data=html_bytes,
                 file_name="visualization_langextract.html",
                 mime="text/html",
                 use_container_width=True,
             )
 
-        st.subheader("Visualization preview")
+        st.subheader("Aperçu de la visualisation")
         st.components.v1.html(html_content, height=520, scrolling=True)
