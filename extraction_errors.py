@@ -108,6 +108,17 @@ def diagnose_extraction(exc: Exception, logger: logging.Logger) -> HTTPException
     elif upstream is not None:
         category = "provider_http"
         message = f"Le fournisseur renvoie HTTP {upstream}. Vérifiez ses logs et sa disponibilité."
+    elif any(
+        isinstance(e, FormatError)
+        and str(e) == "Content must contain an 'extractions' key."
+        for e in chain
+    ):
+        category = "model_output_missing_extractions"
+        message = (
+            "La réponse du modèle ne contient pas la clé racine obligatoire « extractions ». "
+            'Structure attendue : {"extractions": [{"org": "ACME"}]} ; sans entité : {"extractions": []}. '
+            "Conservez le mode JSON/YAML actuel et relancez avec les instructions de structure."
+        )
     elif any(isinstance(e, (FormatError, ResolverParsingError)) for e in chain):
         category = "model_output_format"
         message = "La réponse du modèle ne respecte pas le format d’extraction attendu. Vérifiez la compatibilité du modèle et le mode JSON/YAML."

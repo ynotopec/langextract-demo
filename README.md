@@ -128,6 +128,12 @@ automatiquement. Pour une erreur inconnue, transmettre la ligne JSON
 ## Fonctionnement conservé
 
 - Instructions françaises et exemples métier du dépôt existant.
+- Les instructions métier sont systématiquement complétées côté serveur par le
+  contrat de sortie LangExtract : objet racine `extractions` contenant une liste,
+  avec `{"extractions": []}` lorsque le segment ne contient aucune entité.
+  Cette contrainte s’applique aussi aux prompts personnalisés. Une réponse sans
+  cette clé provoque un diagnostic spécifique ; elle n’est pas convertie
+  silencieusement en résultat vide.
 - Provider `openai` forcé, même pour un alias comme `ai-flash`.
 - JSON par défaut ; YAML avec `USE_OPENAI_JSON_MODE=0` si l’endpoint refuse JSON.
 - Entités nulles omises avec avertissement ; attributs nulls acceptés.

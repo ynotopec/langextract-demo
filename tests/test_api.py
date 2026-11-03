@@ -462,3 +462,49 @@ def test_environment_only_configuration_still_works_without_dotenv(
     assert settings.model_key == "synthetic-environment-only-key"
     assert settings.base_url == "http://127.0.0.1:8001/v1"
     assert settings.model == "environment-model"
+
+
+def test_missing_extractions_wrapper_has_precise_safe_diagnostic(client):
+    from langextract.resolver import Resolver, ResolverParsingError
+
+    from extraction_support import NullSafeFormatHandler
+
+    with pytest.raises(ResolverParsingError) as failure:
+        Resolver(format_handler=NullSafeFormatHandler()).resolve(
+            '{"org":"synthetic-document-secret"}'
+        )
+    with (
+        patch("app.extract_pdf", side_effect=failure.value),
+        patch("app.logger.error") as logged,
+    ):
+        response = upload(client)
+    assert response.status_code == 502
+    assert "clé racine obligatoire" in response.json()["detail"]
+    assert "synthetic-document-secret" not in response.text + logged.call_args.args[0]
+    assert (
+        json.loads(logged.call_args.args[0])["category"]
+        == "model_output_missing_extractions"
+    )
+
+
+def test_user_prompt_is_supplemented_with_required_output_structure():
+    from extraction_errors import ExtractionFailure
+    from extraction_service import OUTPUT_STRUCTURE_INSTRUCTIONS
+
+    with (
+        patch("extraction_service.pdf_to_text", return_value=("ACME", [])),
+        patch(
+            "extraction_service.lx.extract",
+            side_effect=RuntimeError("stop before provider"),
+        ) as provider,
+        pytest.raises(ExtractionFailure, match="inference"),
+    ):
+        extract_pdf(
+            b"%PDF-",
+            ExtractionOptions(prompt="Extraire uniquement les organisations."),
+            CONFIG,
+        )
+    prompt = provider.call_args.kwargs["prompt_description"]
+    assert prompt.startswith("Extraire uniquement les organisations.")
+    assert prompt.endswith(OUTPUT_STRUCTURE_INSTRUCTIONS)
+    assert '{"extractions": []}' in prompt

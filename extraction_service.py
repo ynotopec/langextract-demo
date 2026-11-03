@@ -25,6 +25,16 @@ DEFAULT_PROMPT = textwrap.dedent(
     """
 )
 
+OUTPUT_STRUCTURE_INSTRUCTIONS = """
+Structure de sortie obligatoire (LangExtract) :
+- Retourner un objet racine contenant la clé exacte « extractions », associée à une liste.
+- Chaque élément associe une classe à un extrait exact ; ses attributs éventuels utilisent le suffixe _attributes.
+- Exemple JSON : {"extractions": [{"org": "ACME", "org_attributes": {"type": "entreprise"}}]}.
+- Sans entité : {"extractions": []}. Ne pas retourner les classes directement à la racine.
+- En mode YAML, utiliser la même structure : extractions à la racine et une liste en dessous.
+Respecter le format JSON ou YAML demandé dans les exemples du système.
+"""
+
 EXAMPLES = [
     lx.data.ExampleData(
         text="FACTURE n° 2024-0915 — Client: ACME SAS — Montant: 1 250,00 EUR — Contact: billing@acme.fr — IBAN: FR76 3000 6000 0112 3456 7890 189",
@@ -72,7 +82,7 @@ def extract_pdf(content: bytes, options, settings) -> dict:
     with extraction_stage("inference"):
         result = lx.extract(
             text_or_documents=text,
-            prompt_description=options.prompt,
+            prompt_description=options.prompt + "\n\n" + OUTPUT_STRUCTURE_INSTRUCTIONS,
             examples=EXAMPLES,
             format_type=output_format,
             resolver_params={"format_handler": handler, "suppress_parse_errors": False},
