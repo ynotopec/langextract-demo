@@ -62,7 +62,12 @@ ASCII, une minuscule ASCII, un chiffre et un caractère de ponctuation (par
 exemple `!`, `$`, `#`, `-` ou `_`), sans espace ni autre caractère blanc.
 Dans `.env`, entourer le token de guillemets simples si nécessaire pour préserver
 les caractères spéciaux. Ne pas réutiliser un exemple public comme secret.
-`.env` est chargé par Python, sans exécution shell ni interpolation de `${…}`.
+Avec `run.sh` / `start.sh`, `.env` est chargé par Bash comme dans le lanceur
+Streamlit d’origine : références `${VARIABLE}` et caractères échappés conservent
+leur sens historique. Python ne relit pas le fichier après ce chargement.
+Pour écrire un secret littéral contenant `$`, le placer entre guillemets simples.
+Un lancement direct via `uvicorn app:app` conserve le chargement Python littéral,
+sans expansion de variables ; utiliser `run.sh` pour les anciens `.env` Bash.
 Comme dans le lanceur Streamlit d’origine, les valeurs présentes dans `.env`
 sont prioritaires sur les variables héritées du shell ou du superviseur.
 Les variables absentes de `.env` restent lues dans l’environnement.

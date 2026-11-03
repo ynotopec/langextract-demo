@@ -118,3 +118,62 @@ def test_install_checks_node_before_any_dependency_install(tmp_path, version, ac
         assert result.returncode == 1
         assert "incompatible" in result.stderr
         assert not marker.exists()
+
+
+@pytest.mark.parametrize("sourced", [False, True])
+@pytest.mark.parametrize(
+    "entry,expected",
+    [
+        ('OPENAI_API_KEY="synthetic\\$value"', "synthetic$value"),
+        ("OPENAI_API_KEY='synthetic$value'", "synthetic$value"),
+        (
+            'KEY_PREFIX=synthetic\nOPENAI_API_KEY="${KEY_PREFIX}-value"',
+            "synthetic-value",
+        ),
+        ("OPENAI_API_KEY=synthetic\\#value", "synthetic#value"),
+        ('export OPENAI_API_KEY="synthetic-plain"', "synthetic-plain"),
+    ],
+)
+def test_launcher_preserves_shell_env_values_without_python_reparse(
+    tmp_path, sourced, entry, expected
+):
+    import json
+    import sys
+
+    source = Path(__file__).resolve().parents[1]
+    project = tmp_path / "project with spaces"
+    (project / "frontend/dist").mkdir(parents=True)
+    (project / "frontend/dist/index.html").write_text("built")
+    (project / "run.sh").write_text((source / "run.sh").read_text())
+    (project / ".env").write_text(entry + "\n")
+    venv = tmp_path / "custom venv"
+    (venv / "bin").mkdir(parents=True)
+    (venv / "bin/activate").write_text("")
+    fake_python = venv / "bin/python"
+    fake_python.write_text("""#!/usr/bin/env bash
+exec "$REAL_PYTHON" - <<'PYCHILD'
+import json, os
+from pathlib import Path
+import app
+app.__file__ = str(Path.cwd() / 'app.py')
+settings = app.Settings.from_env()
+Path(os.environ['SETTINGS_LOG']).write_text(json.dumps({'key': settings.model_key}))
+PYCHILD
+""")
+    fake_python.chmod(0o755)
+    env = dict(
+        os.environ,
+        VENV_DIR=str(venv),
+        REAL_PYTHON=sys.executable,
+        PYTHONPATH=str(source),
+        SETTINGS_LOG=str(tmp_path / "settings.json"),
+        OPENAI_API_KEY="synthetic-stale-inherited",
+        LANGEXTRACT_DOTENV_SOURCED="stale",
+    )
+    command = (
+        ["bash", "-c", 'source "$1"', "test", str(project / "run.sh")]
+        if sourced
+        else ["bash", str(project / "run.sh")]
+    )
+    subprocess.run(command, env=env, cwd=tmp_path, check=True, capture_output=True)
+    assert json.loads((tmp_path / "settings.json").read_text())["key"] == expected

@@ -10,6 +10,16 @@
     bash "$PROJECT_ROOT/install.sh"
   fi
   cd "$PROJECT_ROOT"
-  # python-dotenv loads .env literally; secrets containing $ are not shell code.
+  # Preserve the original launcher's shell-compatible .env semantics.
+  # shellcheck disable=SC1090
+  source "$VENV_DIR/bin/activate"
+  unset LANGEXTRACT_DOTENV_SOURCED
+  if [ -f "$PROJECT_ROOT/.env" ]; then
+    set -a
+    # shellcheck disable=SC1091
+    source "$PROJECT_ROOT/.env"
+    set +a
+    export LANGEXTRACT_DOTENV_SOURCED=1
+  fi
   exec "$VENV_DIR/bin/python" -m uvicorn app:app --host "$IP" --port "$PORT" --no-access-log
 )

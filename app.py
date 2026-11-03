@@ -39,9 +39,12 @@ class Settings:
 
     @classmethod
     def from_env(cls):
-        # Match the original run.sh: the project .env overrides inherited values.
-        # Keep secrets literal rather than executing the file as shell code.
-        load_dotenv(Path(__file__).with_name(".env"), interpolate=False, override=True)
+        # run.sh already sourced the file with the original Bash semantics.
+        # Parsing again with dotenv would change escaped dollars/references.
+        if os.getenv("LANGEXTRACT_DOTENV_SOURCED") != "1":
+            load_dotenv(
+                Path(__file__).with_name(".env"), interpolate=False, override=True
+            )
         return cls(
             api_token=os.getenv("API_TOKEN", ""),
             model=os.getenv("OPENAI_API_MODEL", "mistral-small-vllm"),
