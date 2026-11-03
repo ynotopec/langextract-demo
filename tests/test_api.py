@@ -1,0 +1,510 @@
+import json
+import threading
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import replace
+from unittest.mock import patch
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app import ExtractionOptions, Settings, create_app
+from extraction_service import extract_pdf
+
+TOKEN = "Synthetic-api-test-token-000000000000"
+HEADERS = {"Authorization": f"Bearer {TOKEN}"}
+CONFIG = Settings(
+    api_token=TOKEN,
+    model="ai-flash",
+    base_url="http://127.0.0.1:1/v1",
+    model_key="synthetic-model-key",
+)
+
+
+@pytest.fixture
+def client(tmp_path):
+    with TestClient(create_app(CONFIG, tmp_path)) as client:
+        yield client
+
+
+def upload(client, **kwargs):
+    return client.post(
+        "/api/v1/extractions",
+        headers=HEADERS,
+        files={"file": ("test.pdf", b"%PDF-test", "application/pdf")},
+        **kwargs,
+    )
+
+
+@pytest.mark.parametrize(
+    "path,method", [("/api/v1/config", "get"), ("/api/v1/extractions", "post")]
+)
+def test_token_required_before_processing(client, path, method):
+    for headers in [
+        {},
+        {"Authorization": "Bearer wrong"},
+        {"Authorization": "Basic wrong"},
+    ]:
+        response = (
+            getattr(client, method)(path, headers=headers, content=b"not multipart")
+            if method == "post"
+            else client.get(path, headers=headers)
+        )
+        assert response.status_code == 401
+        assert response.headers["www-authenticate"] == "Bearer"
+
+
+def test_config_has_no_secrets_or_endpoint(client):
+    response = client.get("/api/v1/config", headers=HEADERS)
+    assert response.status_code == 200
+    assert CONFIG.api_token not in response.text
+    assert CONFIG.model_key not in response.text
+    assert CONFIG.base_url not in response.text
+    assert response.json()["defaults"]["extraction_passes"] == 2
+    assert response.headers["cache-control"] == "no-store"
+    assert client.get("/healthz").status_code == 200
+    schema = client.get("/openapi.json").json()
+    assert schema["paths"]["/api/v1/extractions"]["post"]["security"] == [
+        {"HTTPBearer": []}
+    ]
+
+
+@pytest.mark.parametrize(
+    "token",
+    [
+        "",
+        "Aa1!aaa",
+        "aa1!aaaa",
+        "AA1!AAAA",
+        "Aaa!aaaa",
+        "Aa12aaaa",
+        "Aa1! aaab",
+        "Aa1!aaa\t",
+        "replace-with-a-random-token-at-least-32-characters",
+    ],
+)
+def test_startup_fails_without_configured_token(token):
+    with (
+        pytest.raises(RuntimeError, match="API_TOKEN"),
+        TestClient(create_app(replace(CONFIG, api_token=token))),
+    ):
+        pass
+
+
+def test_startup_fails_without_provider_key():
+    with (
+        pytest.raises(RuntimeError, match="OPENAI_API_KEY"),
+        TestClient(create_app(replace(CONFIG, model_key=""))),
+    ):
+        pass
+
+
+def test_bad_pdf_and_options_do_not_invoke_model(client):
+    with patch("app.extract_pdf") as extract:
+        assert (
+            client.post(
+                "/api/v1/extractions",
+                headers=HEADERS,
+                files={"file": ("fake.pdf", b"no pdf")},
+            ).status_code
+            == 422
+        )
+        for options in [
+            "not-json",
+            '{"max_workers":25}',
+            '{"extraction_passes":0}',
+            '{"prompt":""}',
+            '{"max_char_buffer":499}',
+        ]:
+            assert upload(client, data={"options": options}).status_code == 422
+        assert (
+            client.post(
+                "/api/v1/extractions", headers=HEADERS, data={"options": "{}"}
+            ).status_code
+            == 415
+        )
+        assert (
+            client.post(
+                "/api/v1/extractions",
+                headers=HEADERS,
+                files={"other": ("a.pdf", b"%PDF-test")},
+            ).status_code
+            == 422
+        )
+        extract.assert_not_called()
+
+
+def test_oversized_file_and_chunked_body(tmp_path):
+    with TestClient(
+        create_app(replace(CONFIG, max_upload_bytes=10), tmp_path)
+    ) as client:
+        assert (
+            client.post(
+                "/api/v1/extractions",
+                headers=HEADERS,
+                files={"file": ("a.pdf", b"%PDF-" + b"x" * 12)},
+            ).status_code
+            == 413
+        )
+
+        # No Content-Length: stream enforcement must also reject large requests.
+        def chunks():
+            yield b'--boundary\r\nContent-Disposition: form-data; name="file"; filename="a.pdf"\r\n\r\n%PDF-'
+            for _ in range(20):
+                yield b"x" * 4096
+            yield b"\r\n--boundary--\r\n"
+
+        response = client.post(
+            "/api/v1/extractions",
+            headers={
+                **HEADERS,
+                "Content-Type": "multipart/form-data; boundary=boundary",
+            },
+            content=chunks(),
+        )
+        assert response.status_code == 413
+
+
+def test_provider_error_does_not_leak_credentials(client):
+    with patch(
+        "app.extract_pdf",
+        side_effect=RuntimeError(f"provider leaked {CONFIG.model_key}"),
+    ):
+        response = upload(client)
+    assert response.status_code == 502
+    assert CONFIG.model_key not in response.text
+    assert client.get("/healthz").status_code == 200
+
+
+def test_concurrency_rejects_second_job_and_releases_slot(client):
+    started, release = threading.Event(), threading.Event()
+    result = {
+        "document": {},
+        "jsonl": "{}\n",
+        "html": "<p>ok</p>",
+        "warnings": [],
+        "skipped_pages": [],
+        "omitted_entities": 0,
+        "text": None,
+    }
+
+    def slow(*args):
+        started.set()
+        assert release.wait(10)
+        return result
+
+    with patch("app.extract_pdf", side_effect=slow), ThreadPoolExecutor() as executor:
+        first = executor.submit(upload, client)
+        try:
+            assert started.wait(5)
+            assert client.get("/healthz").status_code == 200
+            rejected = upload(client)
+            assert rejected.status_code == 503
+            assert rejected.headers["retry-after"] == "5"
+        finally:
+            release.set()
+        assert first.result().status_code == 200
+        assert upload(client).status_code == 200
+
+
+def test_real_extraction_pipeline_through_api(endpoint, tmp_path):
+    url, requests = endpoint
+    with (
+        TestClient(create_app(replace(CONFIG, base_url=url), tmp_path)) as client,
+        patch("extraction_service.pdf_to_text", return_value=("ACME paid 42.", [2])),
+    ):
+        response = upload(client, data={"options": json.dumps({"include_text": True})})
+    assert response.status_code == 200, response.text
+    result = response.json()
+    assert len(requests) == 2
+    assert result["omitted_entities"] == 2
+    assert result["skipped_pages"] == [2]
+    assert len(result["warnings"]) == 2
+    assert result["text"] == "ACME paid 42."
+    assert len(json.loads(result["jsonl"])["extractions"]) == 2
+    assert "ACME" in result["html"]
+
+
+def test_scanned_or_invalid_pdf_is_actionable(client):
+    with patch("extraction_service.pdf_to_text", return_value=("", [1])):
+        response = upload(client)
+    assert response.status_code == 422
+    assert "OCR" in response.text
+    with patch("extraction_service.pdf_to_text", side_effect=ValueError("invalid")):
+        assert upload(client).status_code == 422
+
+
+def test_text_size_limit_prevents_inference():
+    with (
+        patch("extraction_service.pdf_to_text", return_value=("x" * 11, [])),
+        patch("extraction_service.lx.extract") as extract,
+    ):
+        with pytest.raises(ValueError, match="limite"):
+            extract_pdf(
+                b"%PDF-", ExtractionOptions(), replace(CONFIG, max_text_chars=10)
+            )
+        extract.assert_not_called()
+
+
+def test_static_frontend_and_api_not_found(tmp_path):
+    (tmp_path / "index.html").write_text('<html lang="fr">Frontend</html>')
+    with TestClient(create_app(CONFIG, tmp_path)) as client:
+        assert "Frontend" in client.get("/").text
+        assert client.get("/api/v1/missing", headers=HEADERS).status_code == 404
+
+
+@pytest.mark.parametrize(
+    "token", ["Aa1!aaaa", "Aa1$aaaa", "Aa1#aaaa", "Aa1~aaaa", "Aa1${aa}"]
+)
+def test_eight_character_tokens_with_each_required_category_are_accepted(
+    token, tmp_path
+):
+    with TestClient(create_app(replace(CONFIG, api_token=token), tmp_path)) as client:
+        assert (
+            client.get(
+                "/api/v1/config", headers={"Authorization": f"Bearer {token}"}
+            ).status_code
+            == 200
+        )
+        assert (
+            client.get(
+                "/api/v1/config", headers={"Authorization": f"Bearer {token}wrong"}
+            ).status_code
+            == 401
+        )
+
+
+@pytest.mark.parametrize(
+    "status,message,category,hint,http_status",
+    [
+        (401, "secret upstream response", "provider_auth", "OPENAI_API_KEY", 502),
+        (403, "secret upstream response", "provider_auth", "OPENAI_API_KEY", 502),
+        (
+            404,
+            "secret upstream response",
+            "provider_not_found",
+            "OPENAI_API_MODEL",
+            502,
+        ),
+        (429, "secret upstream response", "provider_rate_limit", "quota", 503),
+        (
+            400,
+            "src property must be a valid JSON object",
+            "provider_json_mode",
+            "USE_OPENAI_JSON_MODE=0",
+            502,
+        ),
+        (
+            400,
+            "response_format json_object is not supported",
+            "provider_json_mode",
+            "USE_OPENAI_JSON_MODE=0",
+            502,
+        ),
+        (400, "maximum context length exceeded", "provider_context", "contexte", 502),
+        (400, "unknown invalid input", "provider_bad_request", "HTTP 400", 502),
+        (503, "secret upstream response", "provider_http", "HTTP 503", 502),
+    ],
+)
+def test_wrapped_provider_status_is_actionable_without_leaking(
+    client, status, message, category, hint, http_status
+):
+    import httpx
+    import openai
+    from langextract.core.exceptions import InferenceRuntimeError
+
+    provider_error = openai.APIStatusError(
+        message + CONFIG.model_key,
+        response=httpx.Response(
+            status,
+            request=httpx.Request(
+                "POST", "https://provider.invalid/v1/chat/completions"
+            ),
+        ),
+        body={"secret": CONFIG.model_key},
+    )
+    wrapped = InferenceRuntimeError(
+        "wrapper contains sensitive document", original=provider_error
+    )
+    with (
+        patch(
+            "extraction_service.pdf_to_text", return_value=("synthetic document", [])
+        ),
+        patch("extraction_service.lx.extract", side_effect=wrapped),
+        patch("app.logger.error") as logged,
+    ):
+        response = upload(client)
+    assert response.status_code == http_status
+    assert hint in response.json()["detail"]
+    diagnostic = json.loads(logged.call_args.args[0])
+    assert diagnostic["category"] == category
+    assert diagnostic["stage"] == "inference"
+    assert diagnostic["upstream_status"] == status
+    assert diagnostic["reference"] in response.json()["detail"]
+    assert "APIStatusError" in diagnostic["exception_types"]
+    assert diagnostic["frames"]
+    assert CONFIG.model_key not in response.text + logged.call_args.args[0]
+    assert "sensitive document" not in response.text + logged.call_args.args[0]
+
+
+@pytest.mark.parametrize(
+    "kind,category,http_status",
+    [
+        ("connection", "provider_connection", 502),
+        ("timeout", "provider_timeout", 504),
+        ("format", "model_output_format", 502),
+        ("dependency", "dependency_error", 500),
+    ],
+)
+def test_typed_inference_failures(client, kind, category, http_status):
+    import httpx
+    import openai
+    from langextract.resolver import ResolverParsingError
+
+    request = httpx.Request("POST", "https://provider.invalid/v1/chat/completions")
+    errors = {
+        "connection": openai.APIConnectionError(request=request),
+        "timeout": openai.APITimeoutError(request=request),
+        "format": ResolverParsingError("sensitive model output"),
+        "dependency": ImportError("sensitive path"),
+    }
+    with (
+        patch("extraction_service.pdf_to_text", return_value=("synthetic", [])),
+        patch("extraction_service.lx.extract", side_effect=errors[kind]),
+        patch("app.logger.error") as logged,
+    ):
+        response = upload(client)
+    assert response.status_code == http_status
+    assert json.loads(logged.call_args.args[0])["category"] == category
+    assert "sensitive" not in response.text + logged.call_args.args[0]
+
+
+@pytest.mark.parametrize(
+    "stage,target",
+    [
+        ("export", "extraction_service.lx.io.save_annotated_documents"),
+        ("visualization", "extraction_service.lx.visualize"),
+    ],
+)
+def test_post_inference_failure_reports_actual_stage(endpoint, tmp_path, stage, target):
+    url, _ = endpoint
+    with (
+        TestClient(create_app(replace(CONFIG, base_url=url), tmp_path)) as client,
+        patch("extraction_service.pdf_to_text", return_value=("ACME paid 42.", [])),
+        patch(target, side_effect=RuntimeError("secret document")),
+        patch("app.logger.error") as logged,
+    ):
+        response = upload(client)
+    assert response.status_code == 500
+    assert json.loads(logged.call_args.args[0])["stage"] == stage
+    assert "secret document" not in response.text + logged.call_args.args[0]
+
+
+def test_project_dotenv_overrides_inherited_settings_like_original_launcher(
+    tmp_path, monkeypatch
+):
+    import os
+    import subprocess
+    import sys
+
+    values = {
+        "API_TOKEN": "Synthetic1!local",
+        "OPENAI_API_KEY": "synthetic-${LITERAL}-$-#-local-key",
+        "OPENAI_API_BASE": "http://127.0.0.1:8000/v1",
+        "OPENAI_API_MODEL": "local-model-alias",
+        "USE_OPENAI_JSON_MODE": "0",
+    }
+    env_file = tmp_path / ".env"
+    env_file.write_text(
+        "\n".join(f"export {name}='{value}'" for name, value in values.items()) + "\n"
+    )
+    for name in values:
+        monkeypatch.setenv(name, "synthetic-stale-inherited-value")
+    monkeypatch.setenv("MAX_TEXT_CHARS", "123456")
+    monkeypatch.setattr("app.__file__", str(tmp_path / "app.py"))
+    # Baseline: the original launcher sourced the project .env after inheritance.
+    original = subprocess.run(
+        [
+            "bash",
+            "-c",
+            'set -a; source "$1"; "$2" -c "$3"',
+            "test",
+            str(env_file),
+            sys.executable,
+            "import json,os; print(json.dumps({k:os.environ[k] for k in "
+            + repr(list(values))
+            + "}))",
+        ],
+        env=dict(os.environ),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert json.loads(original.stdout) == values
+    settings = Settings.from_env()
+    assert settings.api_token == values["API_TOKEN"]
+    assert settings.model_key == values["OPENAI_API_KEY"]
+    assert settings.base_url == values["OPENAI_API_BASE"]
+    assert settings.model == values["OPENAI_API_MODEL"]
+    assert settings.json_mode is False
+    assert settings.max_text_chars == 123456  # No .env entry: preserve inheritance.
+
+
+def test_environment_only_configuration_still_works_without_dotenv(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr("app.__file__", str(tmp_path / "app.py"))
+    monkeypatch.setenv("API_TOKEN", "Synthetic1!env")
+    monkeypatch.setenv("OPENAI_API_KEY", "synthetic-environment-only-key")
+    monkeypatch.setenv("OPENAI_API_BASE", "http://127.0.0.1:8001/v1")
+    monkeypatch.setenv("OPENAI_API_MODEL", "environment-model")
+    settings = Settings.from_env()
+    assert settings.api_token == "Synthetic1!env"
+    assert settings.model_key == "synthetic-environment-only-key"
+    assert settings.base_url == "http://127.0.0.1:8001/v1"
+    assert settings.model == "environment-model"
+
+
+def test_missing_extractions_wrapper_has_precise_safe_diagnostic(client):
+    from langextract.resolver import Resolver, ResolverParsingError
+
+    from extraction_support import NullSafeFormatHandler
+
+    with pytest.raises(ResolverParsingError) as failure:
+        Resolver(format_handler=NullSafeFormatHandler()).resolve(
+            '{"org":"synthetic-document-secret"}'
+        )
+    with (
+        patch("app.extract_pdf", side_effect=failure.value),
+        patch("app.logger.error") as logged,
+    ):
+        response = upload(client)
+    assert response.status_code == 502
+    assert "clé racine obligatoire" in response.json()["detail"]
+    assert "synthetic-document-secret" not in response.text + logged.call_args.args[0]
+    assert (
+        json.loads(logged.call_args.args[0])["category"]
+        == "model_output_missing_extractions"
+    )
+
+
+def test_user_prompt_is_supplemented_with_required_output_structure():
+    from extraction_errors import ExtractionFailure
+    from extraction_service import OUTPUT_STRUCTURE_INSTRUCTIONS
+
+    with (
+        patch("extraction_service.pdf_to_text", return_value=("ACME", [])),
+        patch(
+            "extraction_service.lx.extract",
+            side_effect=RuntimeError("stop before provider"),
+        ) as provider,
+        pytest.raises(ExtractionFailure, match="inference"),
+    ):
+        extract_pdf(
+            b"%PDF-",
+            ExtractionOptions(prompt="Extraire uniquement les organisations."),
+            CONFIG,
+        )
+    prompt = provider.call_args.kwargs["prompt_description"]
+    assert prompt.startswith("Extraire uniquement les organisations.")
+    assert prompt.endswith(OUTPUT_STRUCTURE_INSTRUCTIONS)
+    assert '{"extractions": []}' in prompt

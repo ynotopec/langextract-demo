@@ -1,203 +1,290 @@
+"""Authenticated API and same-origin Vue frontend."""
+
+import asyncio
 import json
+import logging
 import os
-import tempfile
-import textwrap
+import secrets
+import string
+import time
+from contextlib import asynccontextmanager
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Annotated
 
-import langextract as lx
-from langextract import factory as lxf
-import streamlit as st
+from dotenv import load_dotenv
+from fastapi import Depends, FastAPI, HTTPException, Request, Security
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from starlette.concurrency import run_in_threadpool
+from starlette.datastructures import UploadFile
+from starlette.formparsers import MultiPartException, MultiPartParser
 
-from extraction_support import NullSafeFormatHandler, pdf_to_text
+from extraction_errors import PDFInputError, diagnose_extraction
+from extraction_service import DEFAULT_PROMPT, extract_pdf
 
-OPENAI_API_MODEL = os.getenv("OPENAI_API_MODEL", "mistral-small-vllm")
-OPENAI_API_BASE = os.getenv("OPENAI_API_BASE", "http://localhost:8000/v1")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-USE_OPENAI_JSON_MODE = os.getenv("USE_OPENAI_JSON_MODE", "1").strip().lower() in {"1", "true", "yes"}
-
-st.set_page_config(page_title="PDF → LangExtract", page_icon="📄", layout="wide")
-st.title("📄 PDF → LangExtract")
-
-
-def mask_secret(secret: str | None) -> str:
-    if not secret:
-        return "(absent)"
-    return secret[:4] + "…" + secret[-4:] if len(secret) > 8 else "****"
+logger = logging.getLogger("langextract.api")
 
 
-with st.sidebar:
-    st.header("Environnement")
-    st.write("**Provider** : `openai` (endpoint compatible)")
-    st.write(f"**OPENAI_API_MODEL**: `{OPENAI_API_MODEL}`")
-    st.write(f"**OPENAI_API_BASE**: `{OPENAI_API_BASE}`")
-    st.write(f"**OPENAI_API_KEY**: `{mask_secret(OPENAI_API_KEY)}`")
-    st.divider()
-    extraction_passes = st.slider("Passes d’extraction", 1, 5, 2)
-    max_workers = st.slider("Requêtes parallèles", 1, 24, 8)
-    max_char_buffer = st.slider("Caractères par segment", 500, 4000, 1200, step=100)
-    show_raw_text = st.checkbox("Afficher le texte extrait", value=False)
+@dataclass(frozen=True)
+class Settings:
+    api_token: str
+    model: str
+    base_url: str
+    model_key: str
+    json_mode: bool = True
+    max_upload_bytes: int = 20 * 1024 * 1024
+    max_text_chars: int = 500_000
 
-DEFAULT_PROMPT = textwrap.dedent(
-    """\
-    Tâche : extraire des entités métier depuis un PDF (français/anglais).
-    Règles :
-    - Utiliser uniquement des extraits exacts du texte.
-    - Ne pas faire chevaucher les extraits.
-    - Attributs utiles si présents : date, montant, devise, email, IBAN, SIREN/SIRET, adresse, téléphone.
-    - Classes : person, org, invoice, date, amount, email, iban, address, phone, ref.
-    - Ne pas inventer de données absentes.
-    - Omettre les entités absentes : ne jamais produire de valeur null ou vide.
-    - Si aucune entité n’est présente, retourner une liste extractions vide.
-    """
-)
+    @classmethod
+    def from_env(cls):
+        # run.sh already sourced the file with the original Bash semantics.
+        # Parsing again with dotenv would change escaped dollars/references.
+        if os.getenv("LANGEXTRACT_DOTENV_SOURCED") != "1":
+            load_dotenv(
+                Path(__file__).with_name(".env"), interpolate=False, override=True
+            )
+        return cls(
+            api_token=os.getenv("API_TOKEN", ""),
+            model=os.getenv("OPENAI_API_MODEL", "mistral-small-vllm"),
+            base_url=os.getenv("OPENAI_API_BASE", "http://127.0.0.1:8000/v1"),
+            model_key=os.getenv("OPENAI_API_KEY", ""),
+            json_mode=os.getenv("USE_OPENAI_JSON_MODE", "1").strip().lower()
+            in {"1", "true", "yes"},
+            max_upload_bytes=int(os.getenv("MAX_UPLOAD_BYTES", str(20 * 1024 * 1024))),
+            max_text_chars=int(os.getenv("MAX_TEXT_CHARS", "500000")),
+        )
 
-st.subheader("Instructions d’extraction")
-prompt = st.text_area("Prompt", value=DEFAULT_PROMPT, height=200)
 
-examples = [
-    lx.data.ExampleData(
-        text="FACTURE n° 2024-0915 — Client: ACME SAS — Montant: 1 250,00 EUR — Contact: billing@acme.fr — IBAN: FR76 3000 6000 0112 3456 7890 189",
-        extractions=[
-            lx.data.Extraction(
-                extraction_class="invoice",
-                extraction_text="FACTURE n° 2024-0915",
-                attributes={"number": "2024-0915"},
-            ),
-            lx.data.Extraction(extraction_class="org", extraction_text="ACME SAS"),
-            lx.data.Extraction(
-                extraction_class="amount",
-                extraction_text="1 250,00 EUR",
-                attributes={"value": "1250.00", "currency": "EUR"},
-            ),
-            lx.data.Extraction(extraction_class="email", extraction_text="billing@acme.fr"),
-            lx.data.Extraction(
-                extraction_class="iban", extraction_text="FR76 3000 6000 0112 3456 7890 189"
-            ),
-        ],
+class ExtractionOptions(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    prompt: str = Field(default=DEFAULT_PROMPT, min_length=1, max_length=10000)
+    extraction_passes: int = Field(default=2, ge=1, le=5)
+    max_workers: int = Field(default=8, ge=1, le=24)
+    max_char_buffer: int = Field(default=1200, ge=500, le=4000)
+    include_text: bool = False
+
+
+class ExtractionResponse(BaseModel):
+    document: dict
+    jsonl: str
+    html: str
+    warnings: list[str]
+    skipped_pages: list[int]
+    omitted_entities: int
+    text: str | None
+
+
+bearer = HTTPBearer(auto_error=False)
+
+
+def create_app(settings: Settings | None = None, frontend_dir: Path | None = None):
+    @asynccontextmanager
+    async def lifespan(app):
+        config = settings or Settings.from_env()
+        token = config.api_token
+        if (
+            len(token) < 8
+            or not any(char in string.ascii_uppercase for char in token)
+            or not any(char in string.ascii_lowercase for char in token)
+            or not any(char in string.digits for char in token)
+            or not any(char in string.punctuation for char in token)
+            or any(char.isspace() for char in token)
+        ):
+            raise RuntimeError(
+                "API_TOKEN doit contenir au moins 8 caractères, une majuscule, "
+                "une minuscule, un chiffre et un caractère spécial, sans espace."
+            )
+        if not config.model_key or not config.model or not config.base_url:
+            raise RuntimeError(
+                "OPENAI_API_KEY, OPENAI_API_MODEL et OPENAI_API_BASE sont requis."
+            )
+        if config.max_upload_bytes <= 0 or config.max_text_chars <= 0:
+            raise RuntimeError("Les limites de taille doivent être positives.")
+        if not logger.handlers:
+            handler = logging.StreamHandler()
+            handler.setFormatter(logging.Formatter("%(message)s"))
+            logger.addHandler(handler)
+        logger.setLevel(logging.INFO)
+        logger.propagate = False
+        app.state.settings = config
+        app.state.extraction_lock = asyncio.Lock()
+        yield
+
+    api = FastAPI(title="LangExtract PDF", version="0.2.0", lifespan=lifespan)
+
+    async def authenticate(
+        request: Request,
+        credentials: Annotated[HTTPAuthorizationCredentials | None, Security(bearer)],
+    ):
+        config = request.app.state.settings
+        if credentials is None or not secrets.compare_digest(
+            credentials.credentials.encode(), config.api_token.encode()
+        ):
+            raise HTTPException(
+                401, "Token absent ou invalide.", headers={"WWW-Authenticate": "Bearer"}
+            )
+        return config
+
+    @api.middleware("http")
+    async def request_metadata(request, call_next):
+        start = time.monotonic()
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Cache-Control"] = "no-store"
+        response.headers["Content-Security-Policy"] = (
+            (
+                "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+                "font-src 'self' data:; img-src 'self' data:; frame-src 'self'; "
+                "connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+            )
+            if request.url.path not in {"/docs", "/redoc"}
+            else "frame-ancestors 'none'"
+        )
+        # No URL query, document content, exception message or Authorization in logs.
+        logger.info(
+            json.dumps(
+                {
+                    "event": "http_request",
+                    "method": request.method,
+                    "status": response.status_code,
+                    "duration_ms": round((time.monotonic() - start) * 1000, 2),
+                }
+            )
+        )
+        return response
+
+    @api.get("/healthz")
+    async def health():
+        return {"status": "ok"}
+
+    @api.get("/api/v1/config")
+    async def config(config: Annotated[Settings, Depends(authenticate)]):
+        return {
+            "defaults": ExtractionOptions().model_dump(),
+            "max_upload_bytes": config.max_upload_bytes,
+        }
+
+    @api.post(
+        "/api/v1/extractions",
+        response_model=ExtractionResponse,
+        openapi_extra={
+            "requestBody": {
+                "required": True,
+                "content": {
+                    "multipart/form-data": {
+                        "schema": {
+                            "type": "object",
+                            "required": ["file"],
+                            "properties": {
+                                "file": {"type": "string", "format": "binary"},
+                                "options": {
+                                    "type": "string",
+                                    "description": "Objet JSON : prompt, extraction_passes, max_workers, max_char_buffer, include_text",
+                                },
+                            },
+                        }
+                    }
+                },
+            }
+        },
     )
-]
-
-st.subheader("PDF")
-pdf_file = st.file_uploader("Déposez un PDF", type=["pdf"])
-
-
-def missing_env() -> list[str]:
-    checks = [
-        ("OPENAI_API_MODEL", OPENAI_API_MODEL),
-        ("OPENAI_API_BASE", OPENAI_API_BASE),
-        ("OPENAI_API_KEY", OPENAI_API_KEY),
-    ]
-    return [name for name, value in checks if not value]
-
-
-def format_inference_error(exc: Exception) -> str:
-    """Return a clearer, actionable inference error message for known providers."""
-    message = str(exc)
-    lowered = message.lower()
-    if "src property must be a valid json object" in lowered:
-        return (
-            f"{message}\n\n"
-            "L’endpoint a rejeté le mode JSON. Essayez USE_OPENAI_JSON_MODE=0 "
-            "dans .env pour demander une sortie YAML."
-        )
-    return message
-
-
-if st.button("🚀 Lancer l’extraction", disabled=pdf_file is None):
-    missing = missing_env()
-    if missing:
-        st.error("Variables d’environnement manquantes : " + ", ".join(missing))
-        st.stop()
-
-    with st.spinner("Lecture du PDF…"):
-        content = pdf_file.read() if pdf_file else b""
-        try:
-            text, skipped_pages = pdf_to_text(content) if content else ("", [])
-        except Exception:
-            st.error("Impossible de lire ce PDF : fichier invalide, chiffré ou endommagé.")
-            st.stop()
-        if skipped_pages:
-            st.warning(
-                "Pages sans texte exploitable ou illisibles, ignorées : "
-                + ", ".join(map(str, skipped_pages))
-                + ". Un OCR peut être nécessaire."
+    async def extract(
+        request: Request, config: Annotated[Settings, Depends(authenticate)]
+    ):
+        # Admission before upload/PDF parsing/inference. One running job per process.
+        lock = request.app.state.extraction_lock
+        if lock.locked():
+            raise HTTPException(
+                503,
+                "Une extraction est déjà en cours. Réessayez plus tard.",
+                headers={"Retry-After": "5"},
             )
-        if not text.strip():
-            st.error("Aucun texte trouvé. Si le PDF est scanné, effectuer un OCR au préalable.")
-            st.stop()
-
-    if show_raw_text:
-        with st.expander("Texte extrait (aperçu)"):
-            st.text(text[:50000])
-
-    output_format = lx.data.FormatType.JSON if USE_OPENAI_JSON_MODE else lx.data.FormatType.YAML
-    handler = NullSafeFormatHandler(format_type=output_format, use_fences=True)
-    extract_kwargs = {
-        "text_or_documents": text,
-        "prompt_description": prompt,
-        "examples": examples,
-        "format_type": output_format,
-        "resolver_params": {"format_handler": handler, "suppress_parse_errors": False},
-        "config": lxf.ModelConfig(
-            model_id=OPENAI_API_MODEL,
-            provider="openai",
-            provider_kwargs={
-                "base_url": OPENAI_API_BASE,
-                "api_key": OPENAI_API_KEY,
-                "format_type": output_format,
-                "max_workers": max_workers,
-            },
-        ),
-        "fence_output": True,
-        "use_schema_constraints": False,
-        "extraction_passes": extraction_passes,
-        "max_workers": max_workers,
-        "max_char_buffer": max_char_buffer,
-    }
-
-    with st.spinner("Extraction…"):
-        try:
-            result = lx.extract(**extract_kwargs)
-        except Exception as exc:
-            st.error(f"Échec de l’inférence : {format_inference_error(exc)}")
-            st.stop()
-
-    if handler.omitted_entities:
-        st.warning(
-            f"Le modèle a produit {handler.omitted_entities} entité(s) nulles, ignorées. "
-            "Les entités valides ont été conservées ; vérifiez le résultat."
-        )
-
-    with tempfile.TemporaryDirectory() as temp_dir:
-        jsonl_path = os.path.join(temp_dir, "extractions.jsonl")
-        lx.io.save_annotated_documents([result], output_name="extractions.jsonl", output_dir=temp_dir)
-
-        html = lx.visualize(jsonl_path)
-        html_content = html.data if hasattr(html, "data") else html
-        html_bytes = html_content.encode("utf-8")
-
-        st.success("Extraction terminée ✅")
-        st.subheader("Résumé JSON")
-        with open(jsonl_path, encoding="utf-8") as handle:
-            st.json(json.loads(handle.readline()))
-
-        col1, col2 = st.columns(2)
-        with col1:
-            with open(jsonl_path, "rb") as handle:
-                st.download_button(
-                    "⬇️ Télécharger JSONL",
-                    data=handle.read(),
-                    file_name="extractions.jsonl",
-                    mime="application/jsonl",
-                    use_container_width=True,
+        async with lock:
+            max_body = config.max_upload_bytes + 64 * 1024
+            try:
+                length = int(request.headers.get("content-length", "0"))
+            except ValueError:
+                raise HTTPException(400, "Taille de requête invalide.") from None
+            if length > max_body:
+                raise HTTPException(413, "Le PDF dépasse la taille autorisée.")
+            if not request.headers.get("content-type", "").startswith(
+                "multipart/form-data"
+            ):
+                raise HTTPException(
+                    415, "Un formulaire multipart/form-data avec un PDF est requis."
                 )
-        with col2:
-            st.download_button(
-                "⬇️ Télécharger la visualisation (HTML)",
-                data=html_bytes,
-                file_name="visualization_langextract.html",
-                mime="text/html",
-                use_container_width=True,
-            )
+            oversized = False
 
-        st.subheader("Aperçu de la visualisation")
-        st.components.v1.html(html_content, height=520, scrolling=True)
+            async def limited_stream():
+                nonlocal oversized
+                total = 0
+                async for chunk in request.stream():
+                    total += len(chunk)
+                    if total > max_body:
+                        oversized = True
+                        # Multipart parser closes temporary files on this exception.
+                        raise MultiPartException("Requête trop volumineuse.")
+                    yield chunk
+
+            try:
+                form = await MultiPartParser(
+                    request.headers,
+                    limited_stream(),
+                    max_files=1,
+                    max_fields=1,
+                    max_part_size=65536,
+                ).parse()
+            except MultiPartException:
+                raise HTTPException(
+                    413 if oversized else 400,
+                    "Formulaire trop volumineux."
+                    if oversized
+                    else "Formulaire PDF invalide.",
+                ) from None
+            try:
+                if set(form.keys()) - {"file", "options"}:
+                    raise HTTPException(422, "Champs acceptés : file et options.")
+                upload = form.get("file")
+                if not isinstance(upload, UploadFile):
+                    raise HTTPException(422, "Le champ file doit contenir un PDF.")
+                if upload.size is not None and upload.size > config.max_upload_bytes:
+                    raise HTTPException(413, "Le PDF dépasse la taille autorisée.")
+                content = await upload.read(config.max_upload_bytes + 1)
+                if len(content) > config.max_upload_bytes:
+                    raise HTTPException(413, "Le PDF dépasse la taille autorisée.")
+                if not content.startswith(b"%PDF-"):
+                    raise HTTPException(422, "Le fichier doit être un PDF valide.")
+                raw_options = form.get("options", "{}")
+                if not isinstance(raw_options, str):
+                    raise HTTPException(422, "options doit être un objet JSON.")
+                try:
+                    options = ExtractionOptions.model_validate_json(raw_options)
+                except ValidationError:
+                    raise HTTPException(
+                        422,
+                        "Paramètres invalides : prompt (1–10000 caractères), passes (1–5), workers (1–24), segment (500–4000).",
+                    ) from None
+                try:
+                    return await run_in_threadpool(
+                        extract_pdf, content, options, config
+                    )
+                except PDFInputError as exc:
+                    raise HTTPException(422, str(exc)) from None
+                except Exception as exc:  # noqa: BLE001 - classify provider/library errors without leaking their content
+                    raise diagnose_extraction(exc, logger) from None
+
+            finally:
+                await form.close()
+
+    dist = frontend_dir or Path(__file__).resolve().parent / "frontend" / "dist"
+    if dist.is_dir():
+        # No SPA fallback: unknown API paths must remain 404.
+        api.mount("/", StaticFiles(directory=dist, html=True), name="frontend")
+    return api
+
+
+app = create_app()

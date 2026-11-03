@@ -28,3 +28,10 @@ dist/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Frontend
+node_modules/
+frontend/dist/
+coverage/
+playwright-report/
+test-results/

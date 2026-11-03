@@ -22,15 +22,15 @@ class NullSafeFormatHandler(FormatHandler):
         cleaned = []
         for group in groups:
             omitted = {
-                key for key, value in group.items()
+                key
+                for key, value in group.items()
                 if value is None and not key.endswith(self.attribute_suffix)
             }
             self.omitted_entities += len(omitted)
             removed_keys = omitted | {name + self.attribute_suffix for name in omitted}
-            cleaned.append({
-                key: value for key, value in group.items()
-                if key not in removed_keys
-            })
+            cleaned.append(
+                {key: value for key, value in group.items() if key not in removed_keys}
+            )
         return cleaned
 
 
@@ -42,7 +42,7 @@ def pdf_to_text(file_data: bytes) -> tuple[str, list[int]]:
         for index, page in enumerate(pdf.pages, start=1):
             try:
                 text = page.extract_text() or ""
-            except Exception:
+            except Exception:  # noqa: BLE001 - unreadable pages must not discard readable pages
                 text = ""
             if text.strip():
                 pages.append(f"[PAGE {index}]\n{text}")
