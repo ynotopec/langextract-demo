@@ -6,7 +6,8 @@ Vue 3 + TypeScript + VueDsfr, servies sur **le même port**.
 
 ## Installation
 
-Prérequis : Python ≥ 3.10, Node.js 24 ≥ 24.15.0 (ou ≥ 26), npm et un endpoint OpenAI-compatible.
+Prérequis : Python ≥ 3.10, npm/npx et un endpoint OpenAI-compatible.
+Node 24 est récupéré automatiquement si le Node disponible est incompatible.
 `install.sh` installe `uv` si nécessaire et utilise par défaut
 `~/venv/<nom-du-projet>` (`VENV_DIR` permet de choisir un autre emplacement).
 
@@ -27,15 +28,13 @@ PYTOKEN
 source run.sh 127.0.0.1 8501
 ```
 
-Si le Node système est trop ancien (par exemple Node 18 sous Ubuntu), construire
-avec un Node 24 temporaire sans modifier l’installation système :
-
-```bash
-npx --yes --package=node@24 -c './install.sh'
-```
-
-Node n’est ensuite pas nécessaire pour servir le frontend déjà construit.
-`install.sh` vérifie la version avant toute installation de dépendances.
+Si le Node système est absent ou incompatible (par exemple Node 18 sous Ubuntu),
+`./install.sh` se relance automatiquement avec Node 24 via `npx`, sans modifier
+le Node système. `npx` doit être disponible et utilisable, avec accès au registre
+npm pour le premier téléchargement. Un garde-fou évite toute boucle de relance.
+Les arguments comme `--upgrade` et les variables `VENV_DIR` / `UV_BIN` sont conservés.
+Avec un Node compatible, aucun bootstrap n’est effectué. Node n’est ensuite pas
+nécessaire pour servir le frontend déjà construit.
 
 Ouvrir `http://127.0.0.1:8501`, saisir le token puis déposer un PDF.
 `bash run.sh [IP] [PORT]` et `start.sh` fonctionnent aussi ; `upgrade.sh` actualise

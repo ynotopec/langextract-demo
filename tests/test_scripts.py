@@ -97,12 +97,17 @@ def test_install_checks_node_before_any_dependency_install(tmp_path, version, ac
             '#!/usr/bin/env bash\nprintf called > "$INSTALL_MARKER"\nexit 99\n'
         )
         stub.chmod(0o755)
+    npx = bin_dir / "npx"
+    npx.write_text('#!/usr/bin/env bash\nprintf "%s\\n" "$@" > "$NPX_LOG"\nexit 98\n')
+    npx.chmod(0o755)
     marker = tmp_path / "called"
     env = dict(
         os.environ,
         PATH=f"{bin_dir}:{os.environ['PATH']}",
         UV_BIN=str(bin_dir / "uv"),
         INSTALL_MARKER=str(marker),
+        NPX_LOG=str(tmp_path / "npx-args"),
+        LANGEXTRACT_NODE_BOOTSTRAPPED="",
     )
     result = subprocess.run(
         ["bash", str(project / "install.sh")],
@@ -115,8 +120,14 @@ def test_install_checks_node_before_any_dependency_install(tmp_path, version, ac
         assert result.returncode == 99  # npm reached, no real package installation.
         assert marker.exists()
     else:
-        assert result.returncode == 1
-        assert "incompatible" in result.stderr
+        assert result.returncode == 98  # Bootstrap attempted, not a real download.
+        assert (tmp_path / "npx-args").read_text().splitlines() == [
+            "--yes",
+            "--package=node@24",
+            "--",
+            "bash",
+            str(project / "install.sh"),
+        ]
         assert not marker.exists()
 
 
@@ -177,3 +188,82 @@ PYCHILD
     )
     subprocess.run(command, env=env, cwd=tmp_path, check=True, capture_output=True)
     assert json.loads((tmp_path / "settings.json").read_text())["key"] == expected
+
+
+@pytest.mark.parametrize("upgrade", [False, True])
+@pytest.mark.parametrize("broken_bootstrap", [False, True])
+def test_install_auto_bootstraps_once_and_preserves_options(
+    tmp_path, upgrade, broken_bootstrap
+):
+    project = tmp_path / "project with spaces"
+    (project / "frontend").mkdir(parents=True)
+    source = Path(__file__).resolve().parents[1]
+    (project / "install.sh").write_text((source / "install.sh").read_text())
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    scripts = {
+        "node": """#!/usr/bin/env bash
+[ "${BOOT_NODE_READY:-}" = 1 ] && [ "${BROKEN_BOOTSTRAP:-}" != 1 ]
+""",
+        "npx": """#!/usr/bin/env bash
+printf '%s\\n' "$@" >> "$BOOTSTRAP_LOG"
+shift 3
+export BOOT_NODE_READY=1
+exec "$@"
+""",
+        "npm": """#!/usr/bin/env bash
+printf '%s\\n' "$*" >> "$NPM_LOG"
+""",
+        "uv": """#!/usr/bin/env bash
+printf '%s\\n' "$*" >> "$UV_LOG"
+if [ "$1" = venv ]; then mkdir -p "$2"; fi
+if [ "$1" = sync ]; then printf '%s' "$UV_PROJECT_ENVIRONMENT" > "$VENV_LOG"; fi
+""",
+    }
+    for name, script in scripts.items():
+        path = bin_dir / name
+        path.write_text(script)
+        path.chmod(0o755)
+    venv = tmp_path / "custom venv"
+    env = dict(
+        os.environ,
+        PATH=f"{bin_dir}:{os.environ['PATH']}",
+        VENV_DIR=str(venv),
+        UV_BIN=str(bin_dir / "uv"),
+        BOOT_NODE_READY="",
+        LANGEXTRACT_NODE_BOOTSTRAPPED="",
+        BROKEN_BOOTSTRAP="1" if broken_bootstrap else "",
+        BOOTSTRAP_LOG=str(tmp_path / "npx"),
+        NPM_LOG=str(tmp_path / "npm"),
+        UV_LOG=str(tmp_path / "uv"),
+        VENV_LOG=str(tmp_path / "venv"),
+    )
+    args = ["--upgrade"] if upgrade else []
+    result = subprocess.run(
+        ["bash", str(project / "install.sh"), *args],
+        env=env,
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert (tmp_path / "npx").read_text().splitlines() == [
+        "--yes",
+        "--package=node@24",
+        "--",
+        "bash",
+        str(project / "install.sh"),
+        *args,
+    ]
+    if broken_bootstrap:
+        assert result.returncode == 1
+        assert "reste incompatible" in result.stderr
+        assert not (tmp_path / "npm").exists()
+    else:
+        assert result.returncode == 0, result.stderr
+        assert (tmp_path / "venv").read_text() == str(venv)
+        assert (tmp_path / "npm").read_text().splitlines() == [
+            "update --no-fund" if upgrade else "ci --no-fund",
+            "run build",
+        ]
+        assert ("lock --upgrade" in (tmp_path / "uv").read_text()) is upgrade

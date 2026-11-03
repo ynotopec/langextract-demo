@@ -6,14 +6,27 @@ PROJECT_NAME="$(basename "$PROJECT_ROOT")"
 VENV_DIR="${VENV_DIR:-$HOME/venv/$PROJECT_NAME}"
 UV_BIN="${UV_BIN:-uv}"
 
-# Check before installing anything: dependencies require a supported Node runtime.
-if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
-  echo "Node.js 24 >=24.15.0 (ou >=26) et npm sont requis." >&2
-  exit 1
+# Reuse a suitable system runtime, otherwise bootstrap Node 24 via npx.
+node_supported() {
+  command -v node >/dev/null 2>&1 &&
+    node -e 'const [major, minor] = process.versions.node.split(".").map(Number); process.exit((major === 24 && minor >= 15) || major >= 26 ? 0 : 1)'
+}
+if ! node_supported; then
+  if [ "${LANGEXTRACT_NODE_BOOTSTRAPPED:-}" = "1" ]; then
+    echo "Le Node fourni par npx reste incompatible (Node 24 >=24.15.0 ou >=26 requis)." >&2
+    exit 1
+  fi
+  if ! command -v npx >/dev/null 2>&1; then
+    echo "Node incompatible et npx introuvable : installer Node 24 >=24.15.0 ou npm/npx pour le démarrage automatique." >&2
+    exit 1
+  fi
+  echo "Node absent ou incompatible : utilisation automatique de Node 24 via npx."
+  export LANGEXTRACT_NODE_BOOTSTRAPPED=1 VENV_DIR UV_BIN
+  # Separate arguments preserve paths with spaces, --upgrade and caller options.
+  exec npx --yes --package=node@24 -- bash "$PROJECT_ROOT/install.sh" "$@"
 fi
-if ! node -e 'const [major, minor] = process.versions.node.split(".").map(Number); process.exit((major === 24 && minor >= 15) || major >= 26 ? 0 : 1)'; then
-  echo "Node.js $(node --version) incompatible : VueDsfr requiert Node 24 >=24.15.0 ou >=26." >&2
-  echo "Sans modifier Node système : npx --yes --package=node@24 -c './install.sh'" >&2
+if ! command -v npm >/dev/null 2>&1; then
+  echo "npm est requis pour construire le frontend." >&2
   exit 1
 fi
 if ! command -v "$UV_BIN" >/dev/null 2>&1; then
