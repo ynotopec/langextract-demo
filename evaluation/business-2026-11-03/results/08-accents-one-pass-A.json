@@ -1,0 +1,125 @@
+{
+  "measurement": {
+    "case": "08-accents",
+    "profile": "one-pass-A",
+    "options": {
+      "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+      "extraction_passes": 1,
+      "max_workers": 1,
+      "max_char_buffer": 1200,
+      "include_text": true
+    },
+    "started_utc": "2026-11-03T20:16:29.675381+00:00",
+    "expected_status": 200,
+    "status": 200,
+    "seconds": 10.174,
+    "response_bytes": 12481,
+    "score": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 1,
+      "predicted": 4,
+      "offset_valid": 4,
+      "source_grounded": 4,
+      "missing": [
+        {
+          "class": "org",
+          "text": "Organisation Été",
+          "count": 1
+        }
+      ],
+      "unexpected": [],
+      "prediction_multiset": [
+        [
+          "date",
+          "6 août 2026",
+          1
+        ],
+        [
+          "org",
+          "Organisation Été",
+          1
+        ],
+        [
+          "person",
+          "Personne Émeraude",
+          1
+        ],
+        [
+          "ref",
+          "DOSSIER-DEMO-ÉTÉ",
+          1
+        ]
+      ]
+    },
+    "jsonl_valid": true,
+    "html_present": true,
+    "warnings": []
+  },
+  "response": {
+    "document": {
+      "extractions": [
+        {
+          "extraction_class": "org",
+          "extraction_text": "Organisation Été",
+          "char_interval": {
+            "start_pos": 53,
+            "end_pos": 69
+          },
+          "alignment_status": "match_exact",
+          "extraction_index": 1,
+          "group_index": 0,
+          "description": null,
+          "attributes": {}
+        },
+        {
+          "extraction_class": "person",
+          "extraction_text": "Personne Émeraude",
+          "char_interval": {
+            "start_pos": 78,
+            "end_pos": 95
+          },
+          "alignment_status": "match_exact",
+          "extraction_index": 2,
+          "group_index": 1,
+          "description": null,
+          "attributes": {}
+        },
+        {
+          "extraction_class": "ref",
+          "extraction_text": "DOSSIER-DEMO-ÉTÉ",
+          "char_interval": {
+            "start_pos": 112,
+            "end_pos": 128
+          },
+          "alignment_status": "match_exact",
+          "extraction_index": 3,
+          "group_index": 2,
+          "description": null,
+          "attributes": {}
+        },
+        {
+          "extraction_class": "date",
+          "extraction_text": "6 août 2026",
+          "char_interval": {
+            "start_pos": 171,
+            "end_pos": 182
+          },
+          "alignment_status": "match_exact",
+          "extraction_index": 4,
+          "group_index": 3,
+          "description": null,
+          "attributes": {}
+        }
+      ],
+      "text": "[PAGE 1]\nCorpus synthétique - Accents et répétitions\nOrganisation Été désigne Personne Émeraude pour le dossier DOSSIER-DEMO-ÉTÉ.\nOrganisation Été confirme la décision du 6 août 2026.",
+      "document_id": "doc_3325274d"
+    },
+    "jsonl": "{\"extractions\": [{\"extraction_class\": \"org\", \"extraction_text\": \"Organisation Été\", \"char_interval\": {\"start_pos\": 53, \"end_pos\": 69}, \"alignment_status\": \"match_exact\", \"extraction_index\": 1, \"group_index\": 0, \"description\": null, \"attributes\": {}}, {\"extraction_class\": \"person\", \"extraction_text\": \"Personne Émeraude\", \"char_interval\": {\"start_pos\": 78, \"end_pos\": 95}, \"alignment_status\": \"match_exact\", \"extraction_index\": 2, \"group_index\": 1, \"description\": null, \"attributes\": {}}, {\"extraction_class\": \"ref\", \"extraction_text\": \"DOSSIER-DEMO-ÉTÉ\", \"char_interval\": {\"start_pos\": 112, \"end_pos\": 128}, \"alignment_status\": \"match_exact\", \"extraction_index\": 3, \"group_index\": 2, \"description\": null, \"attributes\": {}}, {\"extraction_class\": \"date\", \"extraction_text\": \"6 août 2026\", \"char_interval\": {\"start_pos\": 171, \"end_pos\": 182}, \"alignment_status\": \"match_exact\", \"extraction_index\": 4, \"group_index\": 3, \"description\": null, \"attributes\": {}}], \"text\": \"[PAGE 1]\\nCorpus synthétique - Accents et répétitions\\nOrganisation Été désigne Personne Émeraude pour le dossier DOSSIER-DEMO-ÉTÉ.\\nOrganisation Été confirme la décision du 6 août 2026.\", \"document_id\": \"doc_3325274d\"}\n",
+    "html": "<style>\n.lx-highlight { position: relative; border-radius:3px; padding:1px 2px;}\n.lx-highlight .lx-tooltip {\n  visibility: hidden;\n  opacity: 0;\n  transition: opacity 0.2s ease-in-out;\n  background: #333;\n  color: #fff;\n  text-align: left;\n  border-radius: 4px;\n  padding: 6px 8px;\n  position: absolute;\n  z-index: 1000;\n  bottom: 125%;\n  left: 50%;\n  transform: translateX(-50%);\n  font-size: 12px;\n  max-width: 240px;\n  white-space: normal;\n  box-shadow: 0 2px 6px rgba(0,0,0,0.3);\n}\n.lx-highlight:hover .lx-tooltip { visibility: visible; opacity:1; }\n.lx-animated-wrapper { max-width: 100%; font-family: Arial, sans-serif; }\n.lx-controls {\n  background: #fafafa; border: 1px solid #90caf9; border-radius: 8px;\n  padding: 12px; margin-bottom: 16px;\n}\n.lx-button-row {\n  display: flex; justify-content: center; gap: 8px; margin-bottom: 12px;\n}\n.lx-control-btn {\n  background: #4285f4; color: white; border: none; border-radius: 4px;\n  padding: 8px 16px; cursor: pointer; font-size: 13px; font-weight: 500;\n  transition: background-color 0.2s;\n}\n.lx-control-btn:hover { background: #3367d6; }\n.lx-progress-container {\n  margin-bottom: 8px;\n}\n.lx-progress-slider {\n  width: 100%; margin: 0; appearance: none; height: 6px;\n  background: #ddd; border-radius: 3px; outline: none;\n}\n.lx-progress-slider::-webkit-slider-thumb {\n  appearance: none; width: 18px; height: 18px; background: #4285f4;\n  border-radius: 50%; cursor: pointer;\n}\n.lx-progress-slider::-moz-range-thumb {\n  width: 18px; height: 18px; background: #4285f4; border-radius: 50%;\n  cursor: pointer; border: none;\n}\n.lx-status-text {\n  text-align: center; font-size: 12px; color: #666; margin-top: 4px;\n}\n.lx-text-window {\n  font-family: monospace; white-space: pre-wrap; border: 1px solid #90caf9;\n  padding: 12px; max-height: 260px; overflow-y: auto; margin-bottom: 12px;\n  line-height: 1.6;\n}\n.lx-attributes-panel {\n  background: #fafafa; border: 1px solid #90caf9; border-radius: 6px;\n  padding: 8px 10px; margin-top: 8px; font-size: 13px;\n}\n.lx-current-highlight {\n  border-bottom: 4px solid #ff4444;\n  font-weight: bold;\n  animation: lx-pulse 1s ease-in-out;\n}\n@keyframes lx-pulse {\n  0% { text-decoration-color: #ff4444; }\n  50% { text-decoration-color: #ff0000; }\n  100% { text-decoration-color: #ff4444; }\n}\n.lx-legend {\n  font-size: 12px; margin-bottom: 8px;\n  padding-bottom: 8px; border-bottom: 1px solid #e0e0e0;\n}\n.lx-label {\n  display: inline-block;\n  padding: 2px 4px;\n  border-radius: 3px;\n  margin-right: 4px;\n  color: #000;\n}\n.lx-attr-key {\n  font-weight: 600;\n  color: #1565c0;\n  letter-spacing: 0.3px;\n}\n.lx-attr-value {\n  font-weight: 400;\n  opacity: 0.85;\n  letter-spacing: 0.2px;\n}\n\n/* Add optimizations with larger fonts and better readability for GIFs */\n.lx-gif-optimized .lx-text-window { font-size: 16px; line-height: 1.8; }\n.lx-gif-optimized .lx-attributes-panel { font-size: 15px; }\n.lx-gif-optimized .lx-current-highlight { text-decoration-thickness: 4px; }\n</style>\n    <div class=\"lx-animated-wrapper lx-gif-optimized\">\n      <div class=\"lx-attributes-panel\">\n        <div class=\"lx-legend\">Highlights Legend: <span class=\"lx-label\" style=\"background-color:#D2E3FC;\">date</span> <span class=\"lx-label\" style=\"background-color:#C8E6C9;\">org</span> <span class=\"lx-label\" style=\"background-color:#FEF0C3;\">person</span> <span class=\"lx-label\" style=\"background-color:#F9DEDC;\">ref</span></div>\n        <div id=\"attributesContainer\"></div>\n      </div>\n      <div class=\"lx-text-window\" id=\"textWindow\">\n        [PAGE 1]\nCorpus synthétique - Accents et répétitions\n<span class=\"lx-highlight lx-current-highlight\" data-idx=\"0\" style=\"background-color:#C8E6C9;\">Organisation Été</span> désigne <span class=\"lx-highlight\" data-idx=\"1\" style=\"background-color:#FEF0C3;\">Personne Émeraude</span> pour le dossier <span class=\"lx-highlight\" data-idx=\"2\" style=\"background-color:#F9DEDC;\">DOSSIER-DEMO-ÉTÉ</span>.\nOrganisation Été confirme la décision du <span class=\"lx-highlight\" data-idx=\"3\" style=\"background-color:#D2E3FC;\">6 août 2026</span>.\n      </div>\n      <div class=\"lx-controls\">\n        <div class=\"lx-button-row\">\n          <button class=\"lx-control-btn\" onclick=\"playPause()\">▶️ Play</button>\n          <button class=\"lx-control-btn\" onclick=\"prevExtraction()\">⏮ Previous</button>\n          <button class=\"lx-control-btn\" onclick=\"nextExtraction()\">⏭ Next</button>\n        </div>\n        <div class=\"lx-progress-container\">\n          <input type=\"range\" id=\"progressSlider\" class=\"lx-progress-slider\"\n                 min=\"0\" max=\"3\" value=\"0\"\n                 onchange=\"jumpToExtraction(this.value)\">\n        </div>\n        <div class=\"lx-status-text\">\n          Entity <span id=\"entityInfo\">1/4</span> |\n          Pos <span id=\"posInfo\">[53-69]</span>\n        </div>\n      </div>\n    </div>\n\n    <script>\n      (function() {\n        const extractions = [{\"index\": 0, \"class\": \"org\", \"text\": \"Organisation \\u00c9t\\u00e9\", \"color\": \"#C8E6C9\", \"startPos\": 53, \"endPos\": 69, \"beforeText\": \"[PAGE 1]\\nCorpus synth\\u00e9tique - Accents et r\\u00e9p\\u00e9titions\\n\", \"extractionText\": \"Organisation \\u00c9t\\u00e9\", \"afterText\": \" d\\u00e9signe Personne \\u00c9meraude pour le dossier DOSSIER-DEMO-\\u00c9T\\u00c9.\\nOrganisation \\u00c9t\\u00e9 confirme la d\\u00e9cision du 6 ao\\u00fbt 2026.\", \"attributesHtml\": \"<div><strong>class:</strong> org</div><div><strong>attributes:</strong> {}</div>\"}, {\"index\": 1, \"class\": \"person\", \"text\": \"Personne \\u00c9meraude\", \"color\": \"#FEF0C3\", \"startPos\": 78, \"endPos\": 95, \"beforeText\": \"[PAGE 1]\\nCorpus synth\\u00e9tique - Accents et r\\u00e9p\\u00e9titions\\nOrganisation \\u00c9t\\u00e9 d\\u00e9signe \", \"extractionText\": \"Personne \\u00c9meraude\", \"afterText\": \" pour le dossier DOSSIER-DEMO-\\u00c9T\\u00c9.\\nOrganisation \\u00c9t\\u00e9 confirme la d\\u00e9cision du 6 ao\\u00fbt 2026.\", \"attributesHtml\": \"<div><strong>class:</strong> person</div><div><strong>attributes:</strong> {}</div>\"}, {\"index\": 2, \"class\": \"ref\", \"text\": \"DOSSIER-DEMO-\\u00c9T\\u00c9\", \"color\": \"#F9DEDC\", \"startPos\": 112, \"endPos\": 128, \"beforeText\": \"[PAGE 1]\\nCorpus synth\\u00e9tique - Accents et r\\u00e9p\\u00e9titions\\nOrganisation \\u00c9t\\u00e9 d\\u00e9signe Personne \\u00c9meraude pour le dossier \", \"extractionText\": \"DOSSIER-DEMO-\\u00c9T\\u00c9\", \"afterText\": \".\\nOrganisation \\u00c9t\\u00e9 confirme la d\\u00e9cision du 6 ao\\u00fbt 2026.\", \"attributesHtml\": \"<div><strong>class:</strong> ref</div><div><strong>attributes:</strong> {}</div>\"}, {\"index\": 3, \"class\": \"date\", \"text\": \"6 ao\\u00fbt 2026\", \"color\": \"#D2E3FC\", \"startPos\": 171, \"endPos\": 182, \"beforeText\": \"\\u00e9tique - Accents et r\\u00e9p\\u00e9titions\\nOrganisation \\u00c9t\\u00e9 d\\u00e9signe Personne \\u00c9meraude pour le dossier DOSSIER-DEMO-\\u00c9T\\u00c9.\\nOrganisation \\u00c9t\\u00e9 confirme la d\\u00e9cision du \", \"extractionText\": \"6 ao\\u00fbt 2026\", \"afterText\": \".\", \"attributesHtml\": \"<div><strong>class:</strong> date</div><div><strong>attributes:</strong> {}</div>\"}];\n        let currentIndex = 0;\n        let isPlaying = false;\n        let animationInterval = null;\n        let animationSpeed = 1.0;\n\n        function updateDisplay() {\n          const extraction = extractions[currentIndex];\n          if (!extraction) return;\n\n          document.getElementById('attributesContainer').innerHTML = extraction.attributesHtml;\n          document.getElementById('entityInfo').textContent = (currentIndex + 1) + '/' + extractions.length;\n          document.getElementById('posInfo').textContent = '[' + extraction.startPos + '-' + extraction.endPos + ']';\n          document.getElementById('progressSlider').value = currentIndex;\n\n          const playBtn = document.querySelector('.lx-control-btn');\n          if (playBtn) playBtn.textContent = isPlaying ? '⏸ Pause' : '▶️ Play';\n\n          const prevHighlight = document.querySelector('.lx-text-window .lx-current-highlight');\n          if (prevHighlight) prevHighlight.classList.remove('lx-current-highlight');\n          const currentSpan = document.querySelector('.lx-text-window span[data-idx=\"' + currentIndex + '\"]');\n          if (currentSpan) {\n            currentSpan.classList.add('lx-current-highlight');\n            currentSpan.scrollIntoView({block: 'center', behavior: 'smooth'});\n          }\n        }\n\n        function nextExtraction() {\n          currentIndex = (currentIndex + 1) % extractions.length;\n          updateDisplay();\n        }\n\n        function prevExtraction() {\n          currentIndex = (currentIndex - 1 + extractions.length) % extractions.length;\n          updateDisplay();\n        }\n\n        function jumpToExtraction(index) {\n          currentIndex = parseInt(index);\n          updateDisplay();\n        }\n\n        function playPause() {\n          if (isPlaying) {\n            clearInterval(animationInterval);\n            isPlaying = false;\n          } else {\n            animationInterval = setInterval(nextExtraction, animationSpeed * 1000);\n            isPlaying = true;\n          }\n          updateDisplay();\n        }\n\n        window.playPause = playPause;\n        window.nextExtraction = nextExtraction;\n        window.prevExtraction = prevExtraction;\n        window.jumpToExtraction = jumpToExtraction;\n\n        updateDisplay();\n      })();\n    </script>",
+    "warnings": [],
+    "skipped_pages": [],
+    "omitted_entities": 0,
+    "text": "[PAGE 1]\nCorpus synthétique - Accents et répétitions\nOrganisation Été désigne Personne Émeraude pour le dossier DOSSIER-DEMO-ÉTÉ.\nOrganisation Été confirme la décision du 6 août 2026."
+  }
+}

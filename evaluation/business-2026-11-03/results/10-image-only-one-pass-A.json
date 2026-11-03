@@ -1,0 +1,22 @@
+{
+  "measurement": {
+    "case": "10-image-only",
+    "profile": "one-pass-A",
+    "options": {
+      "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+      "extraction_passes": 1,
+      "max_workers": 1,
+      "max_char_buffer": 1200,
+      "include_text": true
+    },
+    "started_utc": "2026-11-03T20:17:31.599977+00:00",
+    "expected_status": 422,
+    "status": 422,
+    "seconds": 0.154,
+    "response_bytes": 73,
+    "error_detail": "Aucun texte trouvé. Un OCR peut être nécessaire en amont."
+  },
+  "response": {
+    "detail": "Aucun texte trouvé. Un OCR peut être nécessaire en amont."
+  }
+}

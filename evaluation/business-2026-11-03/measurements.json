@@ -1,0 +1,1553 @@
+{
+  "base_url": "https://langextract.ailab.infocepo.com",
+  "schedule_seed": 20261103,
+  "rows": [
+    {
+      "case": "08-accents",
+      "profile": "one-pass-A",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:16:29.675381+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 10.174,
+      "response_bytes": 12481,
+      "score": {
+        "tp": 4,
+        "fp": 0,
+        "fn": 1,
+        "predicted": 4,
+        "offset_valid": 4,
+        "source_grounded": 4,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Été",
+            "count": 1
+          }
+        ],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "date",
+            "6 août 2026",
+            1
+          ],
+          [
+            "org",
+            "Organisation Été",
+            1
+          ],
+          [
+            "person",
+            "Personne Émeraude",
+            1
+          ],
+          [
+            "ref",
+            "DOSSIER-DEMO-ÉTÉ",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "08-accents",
+      "profile": "one-pass-B",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:16:39.850710+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 1.463,
+      "response_bytes": 12454,
+      "score": {
+        "tp": 3,
+        "fp": 1,
+        "fn": 2,
+        "predicted": 4,
+        "offset_valid": 4,
+        "source_grounded": 4,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Été",
+            "count": 1
+          },
+          {
+            "class": "person",
+            "text": "Personne Émeraude",
+            "count": 1
+          }
+        ],
+        "unexpected": [
+          {
+            "class": "person",
+            "text": "Émeraude",
+            "count": 1
+          }
+        ],
+        "prediction_multiset": [
+          [
+            "date",
+            "6 août 2026",
+            1
+          ],
+          [
+            "org",
+            "Organisation Été",
+            1
+          ],
+          [
+            "person",
+            "Émeraude",
+            1
+          ],
+          [
+            "ref",
+            "DOSSIER-DEMO-ÉTÉ",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "01-invoice",
+      "profile": "one-pass-A",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:16:41.314945+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 2.312,
+      "response_bytes": 14036,
+      "score": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 5,
+        "offset_valid": 5,
+        "source_grounded": 5,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "100,00 EUR",
+            1
+          ],
+          [
+            "amount",
+            "120,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "12 janvier 2026",
+            1
+          ],
+          [
+            "invoice",
+            "FACTURE n° DEMO-001",
+            1
+          ],
+          [
+            "org",
+            "Organisation Alpha",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "05-english",
+      "profile": "two-passes",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 2,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:16:43.629200+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 3.257,
+      "response_bytes": 13462,
+      "score": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 5,
+        "offset_valid": 5,
+        "source_grounded": 5,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "800.00 USD",
+            1
+          ],
+          [
+            "date",
+            "15 May 2026",
+            1
+          ],
+          [
+            "org",
+            "Organisation Zeta",
+            1
+          ],
+          [
+            "person",
+            "Personne Delta",
+            1
+          ],
+          [
+            "ref",
+            "AGREEMENT-DEMO-008",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "09-no-entities",
+      "profile": "one-pass-B",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:16:46.887624+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 0.668,
+      "response_bytes": 3996,
+      "score": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 0,
+        "offset_valid": 0,
+        "source_grounded": 0,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": []
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "05-english",
+      "profile": "one-pass-B",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:16:47.557101+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 1.86,
+      "response_bytes": 12590,
+      "score": {
+        "tp": 3,
+        "fp": 1,
+        "fn": 2,
+        "predicted": 4,
+        "offset_valid": 4,
+        "source_grounded": 4,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Zeta",
+            "count": 1
+          },
+          {
+            "class": "person",
+            "text": "Personne Delta",
+            "count": 1
+          }
+        ],
+        "unexpected": [
+          {
+            "class": "person",
+            "text": "Delta",
+            "count": 1
+          }
+        ],
+        "prediction_multiset": [
+          [
+            "amount",
+            "800.00 USD",
+            1
+          ],
+          [
+            "date",
+            "15 May 2026",
+            1
+          ],
+          [
+            "person",
+            "Delta",
+            1
+          ],
+          [
+            "ref",
+            "AGREEMENT-DEMO-008",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "04-table",
+      "profile": "one-pass-A",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:16:49.418077+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 2.687,
+      "response_bytes": 16415,
+      "score": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 7,
+        "offset_valid": 7,
+        "source_grounded": 7,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "250,00 EUR",
+            1
+          ],
+          [
+            "amount",
+            "375,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "4 avril 2026",
+            1
+          ],
+          [
+            "date",
+            "5 avril 2026",
+            1
+          ],
+          [
+            "org",
+            "Organisation Epsilon",
+            1
+          ],
+          [
+            "ref",
+            "CMD-DEMO-101",
+            1
+          ],
+          [
+            "ref",
+            "CMD-DEMO-102",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "04-table",
+      "profile": "two-passes",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 2,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:16:52.106194+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 4.568,
+      "response_bytes": 15799,
+      "score": {
+        "tp": 6,
+        "fp": 0,
+        "fn": 1,
+        "predicted": 6,
+        "offset_valid": 6,
+        "source_grounded": 6,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Epsilon",
+            "count": 1
+          }
+        ],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "250,00 EUR",
+            1
+          ],
+          [
+            "amount",
+            "375,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "4 avril 2026",
+            1
+          ],
+          [
+            "date",
+            "5 avril 2026",
+            1
+          ],
+          [
+            "ref",
+            "CMD-DEMO-101",
+            1
+          ],
+          [
+            "ref",
+            "CMD-DEMO-102",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "10-image-only",
+      "profile": "two-passes",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 2,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:16:56.676099+00:00",
+      "expected_status": 422,
+      "status": 422,
+      "seconds": 0.155,
+      "response_bytes": 73,
+      "error_detail": "Aucun texte trouvé. Un OCR peut être nécessaire en amont."
+    },
+    {
+      "case": "08-accents",
+      "profile": "two-passes",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 2,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:16:56.832241+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 1.722,
+      "response_bytes": 12481,
+      "score": {
+        "tp": 4,
+        "fp": 0,
+        "fn": 1,
+        "predicted": 4,
+        "offset_valid": 4,
+        "source_grounded": 4,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Été",
+            "count": 1
+          }
+        ],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "date",
+            "6 août 2026",
+            1
+          ],
+          [
+            "org",
+            "Organisation Été",
+            1
+          ],
+          [
+            "person",
+            "Personne Émeraude",
+            1
+          ],
+          [
+            "ref",
+            "DOSSIER-DEMO-ÉTÉ",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "04-table",
+      "profile": "one-pass-B",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:16:58.555380+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 2.108,
+      "response_bytes": 15480,
+      "score": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 7,
+        "offset_valid": 7,
+        "source_grounded": 7,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "250,00 EUR",
+            1
+          ],
+          [
+            "amount",
+            "375,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "4 avril 2026",
+            1
+          ],
+          [
+            "date",
+            "5 avril 2026",
+            1
+          ],
+          [
+            "org",
+            "Organisation Epsilon",
+            1
+          ],
+          [
+            "ref",
+            "CMD-DEMO-101",
+            1
+          ],
+          [
+            "ref",
+            "CMD-DEMO-102",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "06-superseded",
+      "profile": "one-pass-A",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:00.665445+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 1.519,
+      "response_bytes": 10776,
+      "score": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 1,
+        "predicted": 2,
+        "offset_valid": 2,
+        "source_grounded": 2,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Eta",
+            "count": 1
+          }
+        ],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "450,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "2 juin 2026",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "06-superseded",
+      "profile": "two-passes",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 2,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:02.186219+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 2.11,
+      "response_bytes": 10412,
+      "score": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 1,
+        "predicted": 2,
+        "offset_valid": 2,
+        "source_grounded": 2,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Eta",
+            "count": 1
+          }
+        ],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "450,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "2 juin 2026",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "05-english",
+      "profile": "one-pass-A",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:04.298238+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 1.681,
+      "response_bytes": 12333,
+      "score": {
+        "tp": 4,
+        "fp": 0,
+        "fn": 1,
+        "predicted": 4,
+        "offset_valid": 4,
+        "source_grounded": 4,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Zeta",
+            "count": 1
+          }
+        ],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "800.00 USD",
+            1
+          ],
+          [
+            "date",
+            "15 May 2026",
+            1
+          ],
+          [
+            "person",
+            "Personne Delta",
+            1
+          ],
+          [
+            "ref",
+            "AGREEMENT-DEMO-008",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "03-letter",
+      "profile": "one-pass-B",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:05.980412+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 1.904,
+      "response_bytes": 14067,
+      "score": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 5,
+        "offset_valid": 5,
+        "source_grounded": 5,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "date",
+            "8 mars 2026",
+            1
+          ],
+          [
+            "email",
+            "contact@example.invalid",
+            1
+          ],
+          [
+            "org",
+            "Organisation Delta",
+            1
+          ],
+          [
+            "person",
+            "Personne Gamma",
+            1
+          ],
+          [
+            "ref",
+            "DOSSIER-DEMO-007",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "09-no-entities",
+      "profile": "two-passes",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 2,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:07.886790+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 0.882,
+      "response_bytes": 3996,
+      "score": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 0,
+        "offset_valid": 0,
+        "source_grounded": 0,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": []
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "02-contract",
+      "profile": "one-pass-A",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:08.770680+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 2.202,
+      "response_bytes": 16230,
+      "score": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 7,
+        "offset_valid": 7,
+        "source_grounded": 7,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "9 500,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "3 février 2026",
+            1
+          ],
+          [
+            "org",
+            "Organisation Beta",
+            1
+          ],
+          [
+            "org",
+            "Organisation Gamma",
+            1
+          ],
+          [
+            "person",
+            "Personne Alpha",
+            1
+          ],
+          [
+            "person",
+            "Personne Beta",
+            1
+          ],
+          [
+            "ref",
+            "CONTRAT-DEMO-042",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "07-long",
+      "profile": "one-pass-A",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:10.974119+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 3.099,
+      "response_bytes": 38385,
+      "score": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 1,
+        "predicted": 3,
+        "offset_valid": 3,
+        "source_grounded": 3,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Theta",
+            "count": 1
+          }
+        ],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "1 750,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "9 juillet 2026",
+            1
+          ],
+          [
+            "ref",
+            "MARCHE-DEMO-203",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "07-long",
+      "profile": "two-passes",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 2,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:14.076023+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 5.065,
+      "response_bytes": 38520,
+      "score": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 1,
+        "predicted": 3,
+        "offset_valid": 3,
+        "source_grounded": 3,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Theta",
+            "count": 1
+          }
+        ],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "1 750,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "9 juillet 2026",
+            1
+          ],
+          [
+            "ref",
+            "MARCHE-DEMO-203",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "03-letter",
+      "profile": "two-passes",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 2,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:19.143472+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 3.662,
+      "response_bytes": 13799,
+      "score": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 5,
+        "offset_valid": 5,
+        "source_grounded": 5,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "date",
+            "8 mars 2026",
+            1
+          ],
+          [
+            "email",
+            "contact@example.invalid",
+            1
+          ],
+          [
+            "org",
+            "Organisation Delta",
+            1
+          ],
+          [
+            "person",
+            "Personne Gamma",
+            1
+          ],
+          [
+            "ref",
+            "DOSSIER-DEMO-007",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "06-superseded",
+      "profile": "one-pass-B",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:22.807414+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 1.297,
+      "response_bytes": 10412,
+      "score": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 1,
+        "predicted": 2,
+        "offset_valid": 2,
+        "source_grounded": 2,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Eta",
+            "count": 1
+          }
+        ],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "450,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "2 juin 2026",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "01-invoice",
+      "profile": "one-pass-B",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:24.107571+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 2.039,
+      "response_bytes": 12875,
+      "score": {
+        "tp": 4,
+        "fp": 0,
+        "fn": 1,
+        "predicted": 4,
+        "offset_valid": 4,
+        "source_grounded": 4,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Alpha",
+            "count": 1
+          }
+        ],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "100,00 EUR",
+            1
+          ],
+          [
+            "amount",
+            "120,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "12 janvier 2026",
+            1
+          ],
+          [
+            "invoice",
+            "FACTURE n° DEMO-001",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "10-image-only",
+      "profile": "one-pass-B",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:26.148854+00:00",
+      "expected_status": 422,
+      "status": 422,
+      "seconds": 0.157,
+      "response_bytes": 73,
+      "error_detail": "Aucun texte trouvé. Un OCR peut être nécessaire en amont."
+    },
+    {
+      "case": "09-no-entities",
+      "profile": "one-pass-A",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:26.307973+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 0.675,
+      "response_bytes": 3996,
+      "score": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 0,
+        "offset_valid": 0,
+        "source_grounded": 0,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": []
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "07-long",
+      "profile": "one-pass-B",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:26.985621+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 2.991,
+      "response_bytes": 38385,
+      "score": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 1,
+        "predicted": 3,
+        "offset_valid": 3,
+        "source_grounded": 3,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Theta",
+            "count": 1
+          }
+        ],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "1 750,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "9 juillet 2026",
+            1
+          ],
+          [
+            "ref",
+            "MARCHE-DEMO-203",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "03-letter",
+      "profile": "one-pass-A",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:29.979305+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 1.619,
+      "response_bytes": 13762,
+      "score": {
+        "tp": 4,
+        "fp": 1,
+        "fn": 1,
+        "predicted": 5,
+        "offset_valid": 5,
+        "source_grounded": 5,
+        "missing": [
+          {
+            "class": "org",
+            "text": "Organisation Delta",
+            "count": 1
+          }
+        ],
+        "unexpected": [
+          {
+            "class": "org",
+            "text": "Delta",
+            "count": 1
+          }
+        ],
+        "prediction_multiset": [
+          [
+            "date",
+            "8 mars 2026",
+            1
+          ],
+          [
+            "email",
+            "contact@example.invalid",
+            1
+          ],
+          [
+            "org",
+            "Delta",
+            1
+          ],
+          [
+            "person",
+            "Personne Gamma",
+            1
+          ],
+          [
+            "ref",
+            "DOSSIER-DEMO-007",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "10-image-only",
+      "profile": "one-pass-A",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:31.599977+00:00",
+      "expected_status": 422,
+      "status": 422,
+      "seconds": 0.154,
+      "response_bytes": 73,
+      "error_detail": "Aucun texte trouvé. Un OCR peut être nécessaire en amont."
+    },
+    {
+      "case": "02-contract",
+      "profile": "two-passes",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 2,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:31.755289+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 3.807,
+      "response_bytes": 16230,
+      "score": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 7,
+        "offset_valid": 7,
+        "source_grounded": 7,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "9 500,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "3 février 2026",
+            1
+          ],
+          [
+            "org",
+            "Organisation Beta",
+            1
+          ],
+          [
+            "org",
+            "Organisation Gamma",
+            1
+          ],
+          [
+            "person",
+            "Personne Alpha",
+            1
+          ],
+          [
+            "person",
+            "Personne Beta",
+            1
+          ],
+          [
+            "ref",
+            "CONTRAT-DEMO-042",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "02-contract",
+      "profile": "one-pass-B",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 1,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:35.564682+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 2.272,
+      "response_bytes": 16387,
+      "score": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 7,
+        "offset_valid": 7,
+        "source_grounded": 7,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "9 500,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "3 février 2026",
+            1
+          ],
+          [
+            "org",
+            "Organisation Beta",
+            1
+          ],
+          [
+            "org",
+            "Organisation Gamma",
+            1
+          ],
+          [
+            "person",
+            "Personne Alpha",
+            1
+          ],
+          [
+            "person",
+            "Personne Beta",
+            1
+          ],
+          [
+            "ref",
+            "CONTRAT-DEMO-042",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    },
+    {
+      "case": "01-invoice",
+      "profile": "two-passes",
+      "options": {
+        "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+        "extraction_passes": 2,
+        "max_workers": 1,
+        "max_char_buffer": 1200,
+        "include_text": true
+      },
+      "started_utc": "2026-11-03T20:17:37.838656+00:00",
+      "expected_status": 200,
+      "status": 200,
+      "seconds": 3.83,
+      "response_bytes": 14036,
+      "score": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "predicted": 5,
+        "offset_valid": 5,
+        "source_grounded": 5,
+        "missing": [],
+        "unexpected": [],
+        "prediction_multiset": [
+          [
+            "amount",
+            "100,00 EUR",
+            1
+          ],
+          [
+            "amount",
+            "120,00 EUR",
+            1
+          ],
+          [
+            "date",
+            "12 janvier 2026",
+            1
+          ],
+          [
+            "invoice",
+            "FACTURE n° DEMO-001",
+            1
+          ],
+          [
+            "org",
+            "Organisation Alpha",
+            1
+          ]
+        ]
+      },
+      "jsonl_valid": true,
+      "html_present": true,
+      "warnings": []
+    }
+  ]
+}

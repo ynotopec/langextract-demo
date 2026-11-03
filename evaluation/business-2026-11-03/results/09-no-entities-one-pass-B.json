@@ -1,0 +1,45 @@
+{
+  "measurement": {
+    "case": "09-no-entities",
+    "profile": "one-pass-B",
+    "options": {
+      "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+      "extraction_passes": 1,
+      "max_workers": 1,
+      "max_char_buffer": 1200,
+      "include_text": true
+    },
+    "started_utc": "2026-11-03T20:16:46.887624+00:00",
+    "expected_status": 200,
+    "status": 200,
+    "seconds": 0.668,
+    "response_bytes": 3996,
+    "score": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "predicted": 0,
+      "offset_valid": 0,
+      "source_grounded": 0,
+      "missing": [],
+      "unexpected": [],
+      "prediction_multiset": []
+    },
+    "jsonl_valid": true,
+    "html_present": true,
+    "warnings": []
+  },
+  "response": {
+    "document": {
+      "extractions": [],
+      "text": "[PAGE 1]\nCorpus synthétique - Contrôle négatif sans entité\nCe texte décrit une méthode générique. Il ne contient aucune organisation nommée, aucune\npersonne identifiée et aucune donnée chiffrée.",
+      "document_id": "doc_16449d37"
+    },
+    "jsonl": "{\"extractions\": [], \"text\": \"[PAGE 1]\\nCorpus synthétique - Contrôle négatif sans entité\\nCe texte décrit une méthode générique. Il ne contient aucune organisation nommée, aucune\\npersonne identifiée et aucune donnée chiffrée.\", \"document_id\": \"doc_16449d37\"}\n",
+    "html": "<style>\n.lx-highlight { position: relative; border-radius:3px; padding:1px 2px;}\n.lx-highlight .lx-tooltip {\n  visibility: hidden;\n  opacity: 0;\n  transition: opacity 0.2s ease-in-out;\n  background: #333;\n  color: #fff;\n  text-align: left;\n  border-radius: 4px;\n  padding: 6px 8px;\n  position: absolute;\n  z-index: 1000;\n  bottom: 125%;\n  left: 50%;\n  transform: translateX(-50%);\n  font-size: 12px;\n  max-width: 240px;\n  white-space: normal;\n  box-shadow: 0 2px 6px rgba(0,0,0,0.3);\n}\n.lx-highlight:hover .lx-tooltip { visibility: visible; opacity:1; }\n.lx-animated-wrapper { max-width: 100%; font-family: Arial, sans-serif; }\n.lx-controls {\n  background: #fafafa; border: 1px solid #90caf9; border-radius: 8px;\n  padding: 12px; margin-bottom: 16px;\n}\n.lx-button-row {\n  display: flex; justify-content: center; gap: 8px; margin-bottom: 12px;\n}\n.lx-control-btn {\n  background: #4285f4; color: white; border: none; border-radius: 4px;\n  padding: 8px 16px; cursor: pointer; font-size: 13px; font-weight: 500;\n  transition: background-color 0.2s;\n}\n.lx-control-btn:hover { background: #3367d6; }\n.lx-progress-container {\n  margin-bottom: 8px;\n}\n.lx-progress-slider {\n  width: 100%; margin: 0; appearance: none; height: 6px;\n  background: #ddd; border-radius: 3px; outline: none;\n}\n.lx-progress-slider::-webkit-slider-thumb {\n  appearance: none; width: 18px; height: 18px; background: #4285f4;\n  border-radius: 50%; cursor: pointer;\n}\n.lx-progress-slider::-moz-range-thumb {\n  width: 18px; height: 18px; background: #4285f4; border-radius: 50%;\n  cursor: pointer; border: none;\n}\n.lx-status-text {\n  text-align: center; font-size: 12px; color: #666; margin-top: 4px;\n}\n.lx-text-window {\n  font-family: monospace; white-space: pre-wrap; border: 1px solid #90caf9;\n  padding: 12px; max-height: 260px; overflow-y: auto; margin-bottom: 12px;\n  line-height: 1.6;\n}\n.lx-attributes-panel {\n  background: #fafafa; border: 1px solid #90caf9; border-radius: 6px;\n  padding: 8px 10px; margin-top: 8px; font-size: 13px;\n}\n.lx-current-highlight {\n  border-bottom: 4px solid #ff4444;\n  font-weight: bold;\n  animation: lx-pulse 1s ease-in-out;\n}\n@keyframes lx-pulse {\n  0% { text-decoration-color: #ff4444; }\n  50% { text-decoration-color: #ff0000; }\n  100% { text-decoration-color: #ff4444; }\n}\n.lx-legend {\n  font-size: 12px; margin-bottom: 8px;\n  padding-bottom: 8px; border-bottom: 1px solid #e0e0e0;\n}\n.lx-label {\n  display: inline-block;\n  padding: 2px 4px;\n  border-radius: 3px;\n  margin-right: 4px;\n  color: #000;\n}\n.lx-attr-key {\n  font-weight: 600;\n  color: #1565c0;\n  letter-spacing: 0.3px;\n}\n.lx-attr-value {\n  font-weight: 400;\n  opacity: 0.85;\n  letter-spacing: 0.2px;\n}\n\n/* Add optimizations with larger fonts and better readability for GIFs */\n.lx-gif-optimized .lx-text-window { font-size: 16px; line-height: 1.8; }\n.lx-gif-optimized .lx-attributes-panel { font-size: 15px; }\n.lx-gif-optimized .lx-current-highlight { text-decoration-thickness: 4px; }\n</style><div class=\"lx-animated-wrapper\"><p>No valid extractions to animate.</p></div>",
+    "warnings": [],
+    "skipped_pages": [],
+    "omitted_entities": 0,
+    "text": "[PAGE 1]\nCorpus synthétique - Contrôle négatif sans entité\nCe texte décrit une méthode générique. Il ne contient aucune organisation nommée, aucune\npersonne identifiée et aucune donnée chiffrée."
+  }
+}

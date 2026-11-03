@@ -1,0 +1,168 @@
+{
+  "profiles": {
+    "one-pass-pooled": {
+      "tp": 70,
+      "fp": 3,
+      "fn": 12,
+      "predicted": 73,
+      "offset_valid": 73,
+      "source_grounded": 73,
+      "requests": 18,
+      "successes": 18,
+      "precision": 0.958904109589041,
+      "recall": 0.8536585365853658,
+      "f1": 0.9032258064516129,
+      "mean_seconds": 2.3649999999999998,
+      "median_seconds": 1.9715,
+      "min_seconds": 0.668,
+      "max_seconds": 10.174
+    },
+    "two-passes": {
+      "tp": 37,
+      "fp": 0,
+      "fn": 4,
+      "predicted": 37,
+      "offset_valid": 37,
+      "source_grounded": 37,
+      "requests": 9,
+      "successes": 9,
+      "precision": 1.0,
+      "recall": 0.9024390243902439,
+      "f1": 0.9487179487179487,
+      "mean_seconds": 3.2114444444444445,
+      "median_seconds": 3.662,
+      "min_seconds": 0.882,
+      "max_seconds": 5.065
+    },
+    "one-pass-A": {
+      "tp": 36,
+      "fp": 1,
+      "fn": 5,
+      "predicted": 37,
+      "offset_valid": 37,
+      "source_grounded": 37,
+      "requests": 9,
+      "successes": 9,
+      "precision": 0.972972972972973,
+      "recall": 0.8780487804878049,
+      "f1": 0.9230769230769231,
+      "mean_seconds": 2.885333333333333,
+      "median_seconds": 2.202,
+      "min_seconds": 0.675,
+      "max_seconds": 10.174
+    },
+    "one-pass-B": {
+      "tp": 34,
+      "fp": 2,
+      "fn": 7,
+      "predicted": 36,
+      "offset_valid": 36,
+      "source_grounded": 36,
+      "requests": 9,
+      "successes": 9,
+      "precision": 0.9444444444444444,
+      "recall": 0.8292682926829268,
+      "f1": 0.8831168831168831,
+      "mean_seconds": 1.8446666666666667,
+      "median_seconds": 1.904,
+      "min_seconds": 0.668,
+      "max_seconds": 2.991
+    }
+  },
+  "per_class": {
+    "one-pass-pooled": {
+      "amount": {
+        "tp": 16
+      },
+      "date": {
+        "tp": 18
+      },
+      "email": {
+        "tp": 2
+      },
+      "invoice": {
+        "tp": 2
+      },
+      "org": {
+        "tp": 10,
+        "fn": 10,
+        "fp": 1
+      },
+      "person": {
+        "tp": 8,
+        "fp": 2,
+        "fn": 2
+      },
+      "ref": {
+        "tp": 14
+      }
+    },
+    "two-passes": {
+      "amount": {
+        "tp": 8
+      },
+      "date": {
+        "tp": 9
+      },
+      "email": {
+        "tp": 1
+      },
+      "invoice": {
+        "tp": 1
+      },
+      "org": {
+        "tp": 6,
+        "fn": 4
+      },
+      "person": {
+        "tp": 5
+      },
+      "ref": {
+        "tp": 7
+      }
+    }
+  },
+  "stability_pairs": [
+    {
+      "case": "01-invoice",
+      "same_entity_multiset": false
+    },
+    {
+      "case": "02-contract",
+      "same_entity_multiset": true
+    },
+    {
+      "case": "03-letter",
+      "same_entity_multiset": false
+    },
+    {
+      "case": "04-table",
+      "same_entity_multiset": true
+    },
+    {
+      "case": "05-english",
+      "same_entity_multiset": false
+    },
+    {
+      "case": "06-superseded",
+      "same_entity_multiset": true
+    },
+    {
+      "case": "07-long",
+      "same_entity_multiset": true
+    },
+    {
+      "case": "08-accents",
+      "same_entity_multiset": false
+    },
+    {
+      "case": "09-no-entities",
+      "same_entity_multiset": true
+    }
+  ],
+  "stable_documents": 5,
+  "stability_documents": 9,
+  "scan_expected_rejections": 3,
+  "negative_empty_successes": 3,
+  "unexpected_http_failures": 0
+}

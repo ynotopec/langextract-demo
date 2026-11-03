@@ -1,0 +1,369 @@
+{
+  "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+  "cases": [
+    {
+      "id": "01-invoice",
+      "title": "Facture simple",
+      "paragraphs": [
+        "FACTURE n° DEMO-001",
+        "Fournisseur : Organisation Alpha. Date : 12 janvier 2026.",
+        "Montant hors taxes : 100,00 EUR. Montant toutes taxes comprises : 120,00 EUR."
+      ],
+      "gold": [
+        {
+          "class": "invoice",
+          "text": "FACTURE n° DEMO-001"
+        },
+        {
+          "class": "org",
+          "text": "Organisation Alpha"
+        },
+        {
+          "class": "date",
+          "text": "12 janvier 2026"
+        },
+        {
+          "class": "amount",
+          "text": "100,00 EUR"
+        },
+        {
+          "class": "amount",
+          "text": "120,00 EUR"
+        }
+      ],
+      "pdf": "pdfs/01-invoice.pdf",
+      "pages": 1,
+      "text_characters": 200,
+      "sha256": "aa2db04a019654f25f100401bebd47d45f3fd226cce54c3b7de9baec5480920c"
+    },
+    {
+      "id": "02-contract",
+      "title": "Contrat et parties",
+      "paragraphs": [
+        "Contrat CONTRAT-DEMO-042 entre Organisation Beta et Organisation Gamma.",
+        "Les représentants sont Personne Alpha et Personne Beta.",
+        "Signature : 3 février 2026. Valeur du contrat : 9 500,00 EUR."
+      ],
+      "gold": [
+        {
+          "class": "ref",
+          "text": "CONTRAT-DEMO-042"
+        },
+        {
+          "class": "org",
+          "text": "Organisation Beta"
+        },
+        {
+          "class": "org",
+          "text": "Organisation Gamma"
+        },
+        {
+          "class": "person",
+          "text": "Personne Alpha"
+        },
+        {
+          "class": "person",
+          "text": "Personne Beta"
+        },
+        {
+          "class": "date",
+          "text": "3 février 2026"
+        },
+        {
+          "class": "amount",
+          "text": "9 500,00 EUR"
+        }
+      ],
+      "pdf": "pdfs/02-contract.pdf",
+      "pages": 1,
+      "text_characters": 238,
+      "sha256": "b1a5f986e084f3cde7eeeb8cabbecc6684c6383b320757a4d11984dba262c4c1"
+    },
+    {
+      "id": "03-letter",
+      "title": "Courrier administratif",
+      "paragraphs": [
+        "Dossier DOSSIER-DEMO-007. Le 8 mars 2026.",
+        "Organisation Delta confirme la réception de la demande de Personne Gamma.",
+        "Pour toute question : contact@example.invalid. Aucun paiement demandé."
+      ],
+      "gold": [
+        {
+          "class": "ref",
+          "text": "DOSSIER-DEMO-007"
+        },
+        {
+          "class": "date",
+          "text": "8 mars 2026"
+        },
+        {
+          "class": "org",
+          "text": "Organisation Delta"
+        },
+        {
+          "class": "person",
+          "text": "Personne Gamma"
+        },
+        {
+          "class": "email",
+          "text": "contact@example.invalid"
+        }
+      ],
+      "pdf": "pdfs/03-letter.pdf",
+      "pages": 1,
+      "text_characters": 239,
+      "sha256": "51bcbdcbfd9f0bc5dbad8b0757e0ef831fba889728fb1e9d754f1e777dbe60ca"
+    },
+    {
+      "id": "04-table",
+      "title": "Tableau de commandes",
+      "paragraphs": [
+        "Commandes de Organisation Epsilon."
+      ],
+      "table": [
+        [
+          "Référence",
+          "Échéance",
+          "Montant"
+        ],
+        [
+          "CMD-DEMO-101",
+          "4 avril 2026",
+          "250,00 EUR"
+        ],
+        [
+          "CMD-DEMO-102",
+          "5 avril 2026",
+          "375,00 EUR"
+        ]
+      ],
+      "gold": [
+        {
+          "class": "org",
+          "text": "Organisation Epsilon"
+        },
+        {
+          "class": "ref",
+          "text": "CMD-DEMO-101"
+        },
+        {
+          "class": "date",
+          "text": "4 avril 2026"
+        },
+        {
+          "class": "amount",
+          "text": "250,00 EUR"
+        },
+        {
+          "class": "ref",
+          "text": "CMD-DEMO-102"
+        },
+        {
+          "class": "date",
+          "text": "5 avril 2026"
+        },
+        {
+          "class": "amount",
+          "text": "375,00 EUR"
+        }
+      ],
+      "pdf": "pdfs/04-table.pdf",
+      "pages": 1,
+      "text_characters": 186,
+      "sha256": "3dccc9efddbe8d48b060df61c06763eefa7797e17d8efc9218ca52ee549ff27d"
+    },
+    {
+      "id": "05-english",
+      "title": "Document en anglais",
+      "paragraphs": [
+        "Agreement AGREEMENT-DEMO-008. Organisation Zeta appoints Personne Delta.",
+        "Effective date: 15 May 2026. Contract value: 800.00 USD."
+      ],
+      "gold": [
+        {
+          "class": "ref",
+          "text": "AGREEMENT-DEMO-008"
+        },
+        {
+          "class": "org",
+          "text": "Organisation Zeta"
+        },
+        {
+          "class": "person",
+          "text": "Personne Delta"
+        },
+        {
+          "class": "date",
+          "text": "15 May 2026"
+        },
+        {
+          "class": "amount",
+          "text": "800.00 USD"
+        }
+      ],
+      "pdf": "pdfs/05-english.pdf",
+      "pages": 1,
+      "text_characters": 179,
+      "sha256": "5b48455ce3dfe7a7ac94ab8bd4e069676f75a806b437f0e181e1cf4035591708"
+    },
+    {
+      "id": "06-superseded",
+      "title": "Valeurs annulées et applicables",
+      "paragraphs": [
+        "Organisation Eta : avis rectificatif.",
+        "Ancienne proposition annulée et inapplicable : 300,00 EUR, échéance 1 juin 2026.",
+        "Seule décision applicable : 450,00 EUR, échéance 2 juin 2026."
+      ],
+      "gold": [
+        {
+          "class": "org",
+          "text": "Organisation Eta"
+        },
+        {
+          "class": "amount",
+          "text": "450,00 EUR"
+        },
+        {
+          "class": "date",
+          "text": "2 juin 2026"
+        }
+      ],
+      "pdf": "pdfs/06-superseded.pdf",
+      "pages": 1,
+      "text_characters": 242,
+      "sha256": "e17b01b3a3de1135f5f15ea1a74c76e7b3300155d80fde6383a5affb1737002b"
+    },
+    {
+      "id": "07-long",
+      "title": "Document long avec entités dispersées",
+      "paragraphs": [
+        "Organisation Theta présente le dossier.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Le présent paragraphe décrit une procédure technique générique. Les vérifications sont effectuées sans donnée nominative ni valeur financière.",
+        "Référence du marché : MARCHE-DEMO-203.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La documentation détaille les étapes de contrôle et les conditions de réalisation. Chaque étape doit faire l’objet d’une vérification.",
+        "La décision finale engage 1 750,00 EUR au 9 juillet 2026."
+      ],
+      "gold": [
+        {
+          "class": "org",
+          "text": "Organisation Theta"
+        },
+        {
+          "class": "ref",
+          "text": "MARCHE-DEMO-203"
+        },
+        {
+          "class": "amount",
+          "text": "1 750,00 EUR"
+        },
+        {
+          "class": "date",
+          "text": "9 juillet 2026"
+        }
+      ],
+      "pdf": "pdfs/07-long.pdf",
+      "pages": 3,
+      "text_characters": 6340,
+      "sha256": "f0ed9cef15fd7bac917c3e581bbef889997ca8d94d2154e36ef464bc62a270f5"
+    },
+    {
+      "id": "08-accents",
+      "title": "Accents et répétitions",
+      "paragraphs": [
+        "Organisation Été désigne Personne Émeraude pour le dossier DOSSIER-DEMO-ÉTÉ.",
+        "Organisation Été confirme la décision du 6 août 2026."
+      ],
+      "gold": [
+        {
+          "class": "org",
+          "text": "Organisation Été"
+        },
+        {
+          "class": "person",
+          "text": "Personne Émeraude"
+        },
+        {
+          "class": "ref",
+          "text": "DOSSIER-DEMO-ÉTÉ"
+        },
+        {
+          "class": "org",
+          "text": "Organisation Été"
+        },
+        {
+          "class": "date",
+          "text": "6 août 2026"
+        }
+      ],
+      "pdf": "pdfs/08-accents.pdf",
+      "pages": 1,
+      "text_characters": 183,
+      "sha256": "305b631454d9c1f1503136d2d3594d785957efbe3ec0efe49d67ad2f66b93210"
+    },
+    {
+      "id": "09-no-entities",
+      "title": "Contrôle négatif sans entité",
+      "paragraphs": [
+        "Ce texte décrit une méthode générique. Il ne contient aucune organisation nommée, aucune personne identifiée et aucune donnée chiffrée."
+      ],
+      "gold": [],
+      "pdf": "pdfs/09-no-entities.pdf",
+      "pages": 1,
+      "text_characters": 194,
+      "sha256": "f4658a8bea0091424f0a9520b3992727ce742095474b11797576904e0efaa631"
+    },
+    {
+      "id": "10-image-only",
+      "title": "Contrôle négatif sans couche texte",
+      "paragraphs": [],
+      "gold": [],
+      "expected_status": 422,
+      "pdf": "pdfs/10-image-only.pdf",
+      "pages": 1,
+      "text_characters": 0,
+      "sha256": "f4e4d9961cfe182125730fad002eb9b2bb094ab68e1116bb42df8c90724e3d82"
+    }
+  ]
+}

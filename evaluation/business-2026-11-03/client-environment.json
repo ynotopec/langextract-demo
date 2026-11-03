@@ -1,0 +1,10 @@
+{
+  "scope": "client and PDF generation only; inference server/model configuration unavailable",
+  "python": "3.12.14",
+  "packages": {
+    "reportlab": "4.4.9",
+    "pdfplumber": "0.11.9",
+    "Pillow": "12.3.0"
+  },
+  "runner_httpx": "0.28.1"
+}

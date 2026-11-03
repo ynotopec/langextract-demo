@@ -1,0 +1,145 @@
+{
+  "measurement": {
+    "case": "01-invoice",
+    "profile": "one-pass-A",
+    "options": {
+      "prompt": "Extraire uniquement les entités présentes et applicables dans le document.\nClasses : org (nom complet d'organisation), person (nom complet de personne),\ninvoice (libellé FACTURE n° suivi du numéro), date (date complète, jamais une année seule),\namount (montant avec sa devise), ref (référence de contrat, marché ou dossier), email (adresse complète).\nUtiliser des extraits exacts et non chevauchants. Ne pas extraire les valeurs barrées,\nannulées ou explicitement inapplicables. Ne pas extraire les en-têtes génériques.\nExtraire chaque occurrence applicable, sans inventer ni calculer de total.\nOmettre les classes absentes. Conserver accents, casse et ponctuation.\nAttributs facultatifs ; ils ne remplacent jamais l'extrait exact.",
+      "extraction_passes": 1,
+      "max_workers": 1,
+      "max_char_buffer": 1200,
+      "include_text": true
+    },
+    "started_utc": "2026-11-03T20:16:41.314945+00:00",
+    "expected_status": 200,
+    "status": 200,
+    "seconds": 2.312,
+    "response_bytes": 14036,
+    "score": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "predicted": 5,
+      "offset_valid": 5,
+      "source_grounded": 5,
+      "missing": [],
+      "unexpected": [],
+      "prediction_multiset": [
+        [
+          "amount",
+          "100,00 EUR",
+          1
+        ],
+        [
+          "amount",
+          "120,00 EUR",
+          1
+        ],
+        [
+          "date",
+          "12 janvier 2026",
+          1
+        ],
+        [
+          "invoice",
+          "FACTURE n° DEMO-001",
+          1
+        ],
+        [
+          "org",
+          "Organisation Alpha",
+          1
+        ]
+      ]
+    },
+    "jsonl_valid": true,
+    "html_present": true,
+    "warnings": []
+  },
+  "response": {
+    "document": {
+      "extractions": [
+        {
+          "extraction_class": "invoice",
+          "extraction_text": "FACTURE n° DEMO-001",
+          "char_interval": {
+            "start_pos": 45,
+            "end_pos": 64
+          },
+          "alignment_status": "match_exact",
+          "extraction_index": 1,
+          "group_index": 0,
+          "description": null,
+          "attributes": {
+            "number": "DEMO-001"
+          }
+        },
+        {
+          "extraction_class": "org",
+          "extraction_text": "Organisation Alpha",
+          "char_interval": {
+            "start_pos": 79,
+            "end_pos": 97
+          },
+          "alignment_status": "match_exact",
+          "extraction_index": 2,
+          "group_index": 1,
+          "description": null,
+          "attributes": {}
+        },
+        {
+          "extraction_class": "date",
+          "extraction_text": "12 janvier 2026",
+          "char_interval": {
+            "start_pos": 106,
+            "end_pos": 121
+          },
+          "alignment_status": "match_exact",
+          "extraction_index": 3,
+          "group_index": 2,
+          "description": null,
+          "attributes": {}
+        },
+        {
+          "extraction_class": "amount",
+          "extraction_text": "100,00 EUR",
+          "char_interval": {
+            "start_pos": 144,
+            "end_pos": 154
+          },
+          "alignment_status": "match_exact",
+          "extraction_index": 4,
+          "group_index": 3,
+          "description": null,
+          "attributes": {
+            "value": "100.00",
+            "currency": "EUR"
+          }
+        },
+        {
+          "extraction_class": "amount",
+          "extraction_text": "120,00 EUR",
+          "char_interval": {
+            "start_pos": 189,
+            "end_pos": 199
+          },
+          "alignment_status": "match_exact",
+          "extraction_index": 5,
+          "group_index": 4,
+          "description": null,
+          "attributes": {
+            "value": "120.00",
+            "currency": "EUR"
+          }
+        }
+      ],
+      "text": "[PAGE 1]\nCorpus synthétique - Facture simple\nFACTURE n° DEMO-001\nFournisseur : Organisation Alpha. Date : 12 janvier 2026.\nMontant hors taxes : 100,00 EUR. Montant toutes taxes comprises : 120,00 EUR.",
+      "document_id": "doc_ab3a73dd"
+    },
+    "jsonl": "{\"extractions\": [{\"extraction_class\": \"invoice\", \"extraction_text\": \"FACTURE n° DEMO-001\", \"char_interval\": {\"start_pos\": 45, \"end_pos\": 64}, \"alignment_status\": \"match_exact\", \"extraction_index\": 1, \"group_index\": 0, \"description\": null, \"attributes\": {\"number\": \"DEMO-001\"}}, {\"extraction_class\": \"org\", \"extraction_text\": \"Organisation Alpha\", \"char_interval\": {\"start_pos\": 79, \"end_pos\": 97}, \"alignment_status\": \"match_exact\", \"extraction_index\": 2, \"group_index\": 1, \"description\": null, \"attributes\": {}}, {\"extraction_class\": \"date\", \"extraction_text\": \"12 janvier 2026\", \"char_interval\": {\"start_pos\": 106, \"end_pos\": 121}, \"alignment_status\": \"match_exact\", \"extraction_index\": 3, \"group_index\": 2, \"description\": null, \"attributes\": {}}, {\"extraction_class\": \"amount\", \"extraction_text\": \"100,00 EUR\", \"char_interval\": {\"start_pos\": 144, \"end_pos\": 154}, \"alignment_status\": \"match_exact\", \"extraction_index\": 4, \"group_index\": 3, \"description\": null, \"attributes\": {\"value\": \"100.00\", \"currency\": \"EUR\"}}, {\"extraction_class\": \"amount\", \"extraction_text\": \"120,00 EUR\", \"char_interval\": {\"start_pos\": 189, \"end_pos\": 199}, \"alignment_status\": \"match_exact\", \"extraction_index\": 5, \"group_index\": 4, \"description\": null, \"attributes\": {\"value\": \"120.00\", \"currency\": \"EUR\"}}], \"text\": \"[PAGE 1]\\nCorpus synthétique - Facture simple\\nFACTURE n° DEMO-001\\nFournisseur : Organisation Alpha. Date : 12 janvier 2026.\\nMontant hors taxes : 100,00 EUR. Montant toutes taxes comprises : 120,00 EUR.\", \"document_id\": \"doc_ab3a73dd\"}\n",
+    "html": "<style>\n.lx-highlight { position: relative; border-radius:3px; padding:1px 2px;}\n.lx-highlight .lx-tooltip {\n  visibility: hidden;\n  opacity: 0;\n  transition: opacity 0.2s ease-in-out;\n  background: #333;\n  color: #fff;\n  text-align: left;\n  border-radius: 4px;\n  padding: 6px 8px;\n  position: absolute;\n  z-index: 1000;\n  bottom: 125%;\n  left: 50%;\n  transform: translateX(-50%);\n  font-size: 12px;\n  max-width: 240px;\n  white-space: normal;\n  box-shadow: 0 2px 6px rgba(0,0,0,0.3);\n}\n.lx-highlight:hover .lx-tooltip { visibility: visible; opacity:1; }\n.lx-animated-wrapper { max-width: 100%; font-family: Arial, sans-serif; }\n.lx-controls {\n  background: #fafafa; border: 1px solid #90caf9; border-radius: 8px;\n  padding: 12px; margin-bottom: 16px;\n}\n.lx-button-row {\n  display: flex; justify-content: center; gap: 8px; margin-bottom: 12px;\n}\n.lx-control-btn {\n  background: #4285f4; color: white; border: none; border-radius: 4px;\n  padding: 8px 16px; cursor: pointer; font-size: 13px; font-weight: 500;\n  transition: background-color 0.2s;\n}\n.lx-control-btn:hover { background: #3367d6; }\n.lx-progress-container {\n  margin-bottom: 8px;\n}\n.lx-progress-slider {\n  width: 100%; margin: 0; appearance: none; height: 6px;\n  background: #ddd; border-radius: 3px; outline: none;\n}\n.lx-progress-slider::-webkit-slider-thumb {\n  appearance: none; width: 18px; height: 18px; background: #4285f4;\n  border-radius: 50%; cursor: pointer;\n}\n.lx-progress-slider::-moz-range-thumb {\n  width: 18px; height: 18px; background: #4285f4; border-radius: 50%;\n  cursor: pointer; border: none;\n}\n.lx-status-text {\n  text-align: center; font-size: 12px; color: #666; margin-top: 4px;\n}\n.lx-text-window {\n  font-family: monospace; white-space: pre-wrap; border: 1px solid #90caf9;\n  padding: 12px; max-height: 260px; overflow-y: auto; margin-bottom: 12px;\n  line-height: 1.6;\n}\n.lx-attributes-panel {\n  background: #fafafa; border: 1px solid #90caf9; border-radius: 6px;\n  padding: 8px 10px; margin-top: 8px; font-size: 13px;\n}\n.lx-current-highlight {\n  border-bottom: 4px solid #ff4444;\n  font-weight: bold;\n  animation: lx-pulse 1s ease-in-out;\n}\n@keyframes lx-pulse {\n  0% { text-decoration-color: #ff4444; }\n  50% { text-decoration-color: #ff0000; }\n  100% { text-decoration-color: #ff4444; }\n}\n.lx-legend {\n  font-size: 12px; margin-bottom: 8px;\n  padding-bottom: 8px; border-bottom: 1px solid #e0e0e0;\n}\n.lx-label {\n  display: inline-block;\n  padding: 2px 4px;\n  border-radius: 3px;\n  margin-right: 4px;\n  color: #000;\n}\n.lx-attr-key {\n  font-weight: 600;\n  color: #1565c0;\n  letter-spacing: 0.3px;\n}\n.lx-attr-value {\n  font-weight: 400;\n  opacity: 0.85;\n  letter-spacing: 0.2px;\n}\n\n/* Add optimizations with larger fonts and better readability for GIFs */\n.lx-gif-optimized .lx-text-window { font-size: 16px; line-height: 1.8; }\n.lx-gif-optimized .lx-attributes-panel { font-size: 15px; }\n.lx-gif-optimized .lx-current-highlight { text-decoration-thickness: 4px; }\n</style>\n    <div class=\"lx-animated-wrapper lx-gif-optimized\">\n      <div class=\"lx-attributes-panel\">\n        <div class=\"lx-legend\">Highlights Legend: <span class=\"lx-label\" style=\"background-color:#D2E3FC;\">amount</span> <span class=\"lx-label\" style=\"background-color:#C8E6C9;\">date</span> <span class=\"lx-label\" style=\"background-color:#FEF0C3;\">invoice</span> <span class=\"lx-label\" style=\"background-color:#F9DEDC;\">org</span></div>\n        <div id=\"attributesContainer\"></div>\n      </div>\n      <div class=\"lx-text-window\" id=\"textWindow\">\n        [PAGE 1]\nCorpus synthétique - Facture simple\n<span class=\"lx-highlight lx-current-highlight\" data-idx=\"0\" style=\"background-color:#FEF0C3;\">FACTURE n° DEMO-001</span>\nFournisseur : <span class=\"lx-highlight\" data-idx=\"1\" style=\"background-color:#F9DEDC;\">Organisation Alpha</span>. Date : <span class=\"lx-highlight\" data-idx=\"2\" style=\"background-color:#C8E6C9;\">12 janvier 2026</span>.\nMontant hors taxes : <span class=\"lx-highlight\" data-idx=\"3\" style=\"background-color:#D2E3FC;\">100,00 EUR</span>. Montant toutes taxes comprises : <span class=\"lx-highlight\" data-idx=\"4\" style=\"background-color:#D2E3FC;\">120,00 EUR</span>.\n      </div>\n      <div class=\"lx-controls\">\n        <div class=\"lx-button-row\">\n          <button class=\"lx-control-btn\" onclick=\"playPause()\">▶️ Play</button>\n          <button class=\"lx-control-btn\" onclick=\"prevExtraction()\">⏮ Previous</button>\n          <button class=\"lx-control-btn\" onclick=\"nextExtraction()\">⏭ Next</button>\n        </div>\n        <div class=\"lx-progress-container\">\n          <input type=\"range\" id=\"progressSlider\" class=\"lx-progress-slider\"\n                 min=\"0\" max=\"4\" value=\"0\"\n                 onchange=\"jumpToExtraction(this.value)\">\n        </div>\n        <div class=\"lx-status-text\">\n          Entity <span id=\"entityInfo\">1/5</span> |\n          Pos <span id=\"posInfo\">[45-64]</span>\n        </div>\n      </div>\n    </div>\n\n    <script>\n      (function() {\n        const extractions = [{\"index\": 0, \"class\": \"invoice\", \"text\": \"FACTURE n\\u00b0 DEMO-001\", \"color\": \"#FEF0C3\", \"startPos\": 45, \"endPos\": 64, \"beforeText\": \"[PAGE 1]\\nCorpus synth\\u00e9tique - Facture simple\\n\", \"extractionText\": \"FACTURE n\\u00b0 DEMO-001\", \"afterText\": \"\\nFournisseur : Organisation Alpha. Date : 12 janvier 2026.\\nMontant hors taxes : 100,00 EUR. Montant toutes taxes comprises : 120,00 EUR.\", \"attributesHtml\": \"<div><strong>class:</strong> invoice</div><div><strong>attributes:</strong> {<span class=\\\"lx-attr-key\\\">number</span>: <span class=\\\"lx-attr-value\\\">DEMO-001</span>}</div>\"}, {\"index\": 1, \"class\": \"org\", \"text\": \"Organisation Alpha\", \"color\": \"#F9DEDC\", \"startPos\": 79, \"endPos\": 97, \"beforeText\": \"[PAGE 1]\\nCorpus synth\\u00e9tique - Facture simple\\nFACTURE n\\u00b0 DEMO-001\\nFournisseur : \", \"extractionText\": \"Organisation Alpha\", \"afterText\": \". Date : 12 janvier 2026.\\nMontant hors taxes : 100,00 EUR. Montant toutes taxes comprises : 120,00 EUR.\", \"attributesHtml\": \"<div><strong>class:</strong> org</div><div><strong>attributes:</strong> {}</div>\"}, {\"index\": 2, \"class\": \"date\", \"text\": \"12 janvier 2026\", \"color\": \"#C8E6C9\", \"startPos\": 106, \"endPos\": 121, \"beforeText\": \"[PAGE 1]\\nCorpus synth\\u00e9tique - Facture simple\\nFACTURE n\\u00b0 DEMO-001\\nFournisseur : Organisation Alpha. Date : \", \"extractionText\": \"12 janvier 2026\", \"afterText\": \".\\nMontant hors taxes : 100,00 EUR. Montant toutes taxes comprises : 120,00 EUR.\", \"attributesHtml\": \"<div><strong>class:</strong> date</div><div><strong>attributes:</strong> {}</div>\"}, {\"index\": 3, \"class\": \"amount\", \"text\": \"100,00 EUR\", \"color\": \"#D2E3FC\", \"startPos\": 144, \"endPos\": 154, \"beforeText\": \"[PAGE 1]\\nCorpus synth\\u00e9tique - Facture simple\\nFACTURE n\\u00b0 DEMO-001\\nFournisseur : Organisation Alpha. Date : 12 janvier 2026.\\nMontant hors taxes : \", \"extractionText\": \"100,00 EUR\", \"afterText\": \". Montant toutes taxes comprises : 120,00 EUR.\", \"attributesHtml\": \"<div><strong>class:</strong> amount</div><div><strong>attributes:</strong> {<span class=\\\"lx-attr-key\\\">value</span>: <span class=\\\"lx-attr-value\\\">100.00</span>, <span class=\\\"lx-attr-key\\\">currency</span>: <span class=\\\"lx-attr-value\\\">EUR</span>}</div>\"}, {\"index\": 4, \"class\": \"amount\", \"text\": \"120,00 EUR\", \"color\": \"#D2E3FC\", \"startPos\": 189, \"endPos\": 199, \"beforeText\": \"imple\\nFACTURE n\\u00b0 DEMO-001\\nFournisseur : Organisation Alpha. Date : 12 janvier 2026.\\nMontant hors taxes : 100,00 EUR. Montant toutes taxes comprises : \", \"extractionText\": \"120,00 EUR\", \"afterText\": \".\", \"attributesHtml\": \"<div><strong>class:</strong> amount</div><div><strong>attributes:</strong> {<span class=\\\"lx-attr-key\\\">value</span>: <span class=\\\"lx-attr-value\\\">120.00</span>, <span class=\\\"lx-attr-key\\\">currency</span>: <span class=\\\"lx-attr-value\\\">EUR</span>}</div>\"}];\n        let currentIndex = 0;\n        let isPlaying = false;\n        let animationInterval = null;\n        let animationSpeed = 1.0;\n\n        function updateDisplay() {\n          const extraction = extractions[currentIndex];\n          if (!extraction) return;\n\n          document.getElementById('attributesContainer').innerHTML = extraction.attributesHtml;\n          document.getElementById('entityInfo').textContent = (currentIndex + 1) + '/' + extractions.length;\n          document.getElementById('posInfo').textContent = '[' + extraction.startPos + '-' + extraction.endPos + ']';\n          document.getElementById('progressSlider').value = currentIndex;\n\n          const playBtn = document.querySelector('.lx-control-btn');\n          if (playBtn) playBtn.textContent = isPlaying ? '⏸ Pause' : '▶️ Play';\n\n          const prevHighlight = document.querySelector('.lx-text-window .lx-current-highlight');\n          if (prevHighlight) prevHighlight.classList.remove('lx-current-highlight');\n          const currentSpan = document.querySelector('.lx-text-window span[data-idx=\"' + currentIndex + '\"]');\n          if (currentSpan) {\n            currentSpan.classList.add('lx-current-highlight');\n            currentSpan.scrollIntoView({block: 'center', behavior: 'smooth'});\n          }\n        }\n\n        function nextExtraction() {\n          currentIndex = (currentIndex + 1) % extractions.length;\n          updateDisplay();\n        }\n\n        function prevExtraction() {\n          currentIndex = (currentIndex - 1 + extractions.length) % extractions.length;\n          updateDisplay();\n        }\n\n        function jumpToExtraction(index) {\n          currentIndex = parseInt(index);\n          updateDisplay();\n        }\n\n        function playPause() {\n          if (isPlaying) {\n            clearInterval(animationInterval);\n            isPlaying = false;\n          } else {\n            animationInterval = setInterval(nextExtraction, animationSpeed * 1000);\n            isPlaying = true;\n          }\n          updateDisplay();\n        }\n\n        window.playPause = playPause;\n        window.nextExtraction = nextExtraction;\n        window.prevExtraction = prevExtraction;\n        window.jumpToExtraction = jumpToExtraction;\n\n        updateDisplay();\n      })();\n    </script>",
+    "warnings": [],
+    "skipped_pages": [],
+    "omitted_entities": 0,
+    "text": "[PAGE 1]\nCorpus synthétique - Facture simple\nFACTURE n° DEMO-001\nFournisseur : Organisation Alpha. Date : 12 janvier 2026.\nMontant hors taxes : 100,00 EUR. Montant toutes taxes comprises : 120,00 EUR."
+  }
+}
