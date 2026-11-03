@@ -61,6 +61,60 @@ describe('document extraction', () => {
     expect(wrapper.find('a[download]').exists()).toBe(false)
   })
 
+  it('uses matching category colors, counts and visible labels in the legend, table and Unicode highlights', async () => {
+    await connect()
+    await selectPdf()
+    const extractions = [
+      { extraction_class: 'org', extraction_text: 'ACME', char_interval: { start_pos: 2, end_pos: 6 } },
+      { extraction_class: 'amount', extraction_text: '42', char_interval: { start_pos: 7, end_pos: 9 } },
+      { extraction_class: 'person', extraction_text: 'Alice', char_interval: { start_pos: 10, end_pos: 15 } },
+    ]
+    const complete = async (items: typeof extractions) => {
+      fetchMock.mockResolvedValueOnce(reply({ document: { text: '😀 ACME 42 Alice', extractions: items }, jsonl: '{}', html: '', warnings: [] }))
+      await wrapper.get('form').trigger('submit')
+      await flushPromises()
+    }
+    await complete(extractions)
+    const legend = wrapper.get('[aria-label="Légende des catégories"]')
+    expect(legend.findAll('li')).toHaveLength(3)
+    expect(legend.text()).toContain('Organisation (org) · 1')
+    const colors = new Map<string, string>()
+    for (const [index, entity] of extractions.entries()) {
+      const badge = wrapper.findAll('tbody .entity-category')[index]!
+      const mark = wrapper.findAll('.entity-highlight')[index]!
+      colors.set(entity.extraction_class, badge.attributes('style') ?? '')
+      expect(mark.attributes('style')).toBe(badge.attributes('style'))
+      expect(legend.findAll('.entity-category')[index]!.attributes('style')).toBe(badge.attributes('style'))
+      expect(mark.get('small').text()).toBe(badge.text())
+      expect(mark.element.firstChild?.textContent).toBe(entity.extraction_text)
+    }
+    expect(new Set(colors.values()).size).toBe(3)
+    expect(wrapper.get('.document-text').element.parentElement?.hasAttribute('open')).toBe(true)
+    // The same class must retain its color when order or document changes.
+    await complete([...extractions].reverse())
+    for (const [index, entity] of [...extractions].reverse().entries()) {
+      expect(wrapper.findAll('tbody .entity-category')[index]!.attributes('style')).toBe(colors.get(entity.extraction_class))
+    }
+  })
+
+  it('escapes custom category labels and never puts category text into CSS', async () => {
+    await connect()
+    await selectPdf()
+    const category = '<script>evil()</script>;color:red'
+    fetchMock.mockResolvedValueOnce(reply({ document: { text: 'ACME', extractions: [
+      { extraction_class: category, extraction_text: 'ACME', char_interval: { start_pos: 0, end_pos: 4 } },
+    ] }, jsonl: '{}', html: '', warnings: [] }))
+    await wrapper.get('form').trigger('submit')
+    await flushPromises()
+    expect(wrapper.get('.entity-highlight small').text()).toBe(category)
+    expect(wrapper.find('script').exists()).toBe(false)
+    for (const badge of wrapper.findAll('.entity-category, .entity-highlight')) {
+      expect(badge.attributes('style')).not.toContain('evil')
+      expect(badge.attributes('style')).not.toContain('color:red')
+      expect(badge.attributes('style')).toContain('var(--background-contrast-')
+    }
+  })
+
   it('shows an actionable busy error and allows retry', async () => {
     await connect()
     await selectPdf()

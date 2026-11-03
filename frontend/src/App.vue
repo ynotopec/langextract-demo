@@ -2,6 +2,7 @@
 import { computed, onUnmounted, ref } from 'vue'
 import { DsfrAlert, DsfrButton, DsfrInput } from '@gouvminint/vue-dsfr'
 import { apiRequest, type Options, type Result } from './api'
+import { categoryLabel, categoryStyle } from './categories'
 
 const token = ref('')
 const connected = ref(false)
@@ -13,19 +14,25 @@ const options = ref<Options>({ prompt: '', extraction_passes: 2, max_workers: 8,
 const result = ref<Result>()
 const downloads = ref<{ jsonl: string; html: string }>()
 const entities = computed(() => result.value?.document.extractions ?? [])
+const categoryCounts = computed(() => {
+  const counts = new Map<string, number>()
+  for (const entity of entities.value) counts.set(entity.extraction_class, (counts.get(entity.extraction_class) ?? 0) + 1)
+  return [...counts].map(([name, count]) => ({ name, count }))
+})
 // Build safe text nodes and marks from offsets; never inject model/PDF HTML.
 const highlighted = computed(() => {
-  const text = result.value?.document.text ?? ''
+  // LangExtract offsets count Unicode code points, while JS slice uses UTF-16.
+  const text = Array.from(result.value?.document.text ?? '')
   const segments: { text: string; label?: string }[] = []
   let cursor = 0
   for (const entity of [...entities.value].sort((a, b) => (a.char_interval?.start_pos ?? 0) - (b.char_interval?.start_pos ?? 0))) {
     const interval = entity.char_interval
     if (!interval || interval.start_pos < cursor || interval.end_pos > text.length || interval.end_pos <= interval.start_pos) continue
-    segments.push({ text: text.slice(cursor, interval.start_pos) })
-    segments.push({ text: text.slice(interval.start_pos, interval.end_pos), label: entity.extraction_class })
+    segments.push({ text: text.slice(cursor, interval.start_pos).join('') })
+    segments.push({ text: text.slice(interval.start_pos, interval.end_pos).join(''), label: entity.extraction_class })
     cursor = interval.end_pos
   }
-  segments.push({ text: text.slice(cursor) })
+  segments.push({ text: text.slice(cursor).join('') })
   return segments
 })
 const controller = new AbortController()
@@ -131,12 +138,15 @@ async function extract() {
           <li><a class="fr-btn fr-btn--secondary" :href="downloads.jsonl" download="extractions.jsonl">Télécharger le JSONL</a></li>
           <li><a class="fr-btn fr-btn--secondary" :href="downloads.html" download="visualization_langextract.html">Télécharger la visualisation HTML</a></li>
         </ul>
-        <div v-if="entities.length" class="fr-table"><table><caption>Entités extraites du document</caption><thead><tr><th scope="col">Classe</th><th scope="col">Extrait</th></tr></thead><tbody><tr v-for="(entity, index) in entities" :key="index"><td>{{ entity.extraction_class }}</td><td>{{ entity.extraction_text }}</td></tr></tbody></table></div>
+        <ul v-if="categoryCounts.length" class="category-legend fr-mb-3w" aria-label="Légende des catégories">
+          <li v-for="category in categoryCounts" :key="category.name"><span class="entity-category" :style="categoryStyle(category.name)">{{ categoryLabel(category.name) }} · {{ category.count }}</span></li>
+        </ul>
+        <div v-if="entities.length" class="fr-table"><table><caption>Entités extraites du document</caption><thead><tr><th scope="col">Classe</th><th scope="col">Extrait</th></tr></thead><tbody><tr v-for="(entity, index) in entities" :key="index"><td><span class="entity-category" :style="categoryStyle(entity.extraction_class)">{{ categoryLabel(entity.extraction_class) }}</span></td><td>{{ entity.extraction_text }}</td></tr></tbody></table></div>
         <details class="fr-mb-3w"><summary>Résumé JSON</summary><pre>{{ JSON.stringify(result.document, null, 2) }}</pre></details>
         <details v-if="result.text" class="fr-mb-3w"><summary>Texte extrait</summary><pre>{{ result.text }}</pre></details>
-        <details v-if="result.document.text" class="fr-mb-3w">
+        <details v-if="result.document.text" open class="fr-mb-3w">
           <summary>Visualisation des entités dans le texte</summary>
-          <p class="document-text"><template v-for="(segment, index) in highlighted" :key="index"><mark v-if="segment.label" :title="segment.label">{{ segment.text }}</mark><template v-else>{{ segment.text }}</template></template></p>
+          <p class="document-text"><template v-for="(segment, index) in highlighted" :key="index"><mark v-if="segment.label" class="entity-highlight" :style="categoryStyle(segment.label)">{{ segment.text }}<small class="entity-label fr-text--xs">{{ categoryLabel(segment.label) }}</small></mark><template v-else>{{ segment.text }}</template></template></p>
         </details>
       </section>
     </template>
@@ -146,4 +156,8 @@ async function extract() {
 
 <style scoped>
 pre, .document-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.category-legend { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; padding: 0; }
+.entity-category, .entity-highlight { border: 1px solid; border-radius: 0.25rem; padding: 0.125rem 0.25rem; box-decoration-break: clone; }
+.entity-category { display: inline-block; }
+.entity-label { margin-inline-start: 0.5rem; white-space: normal; }
 </style>

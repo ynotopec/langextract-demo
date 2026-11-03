@@ -134,6 +134,10 @@ automatiquement. Pour une erreur inconnue, transmettre la ligne JSON
 - Entités nulles omises avec avertissement ; attributs nulls acceptés.
 - Pages sans texte/illisibles signalées ; OCR préalable nécessaire pour les scans.
 - Résumé, tableau d’entités et surlignage dans le texte ; exports JSONL et HTML.
+- Couleurs par catégorie, stables entre les documents, avec légende et compteurs.
+  La légende, les badges du tableau et les surlignages utilisent les mêmes paires
+  de tokens DSFR (clair/sombre). Les libellés restent visibles sans dépendre de
+  la couleur ; les catégories personnalisées sont également prises en charge.
   La vue intégrée utilise des nœuds texte Vue échappés. Le HTML LangExtract est
   uniquement téléchargé, jamais injecté dans le DOM de l’application.
 
