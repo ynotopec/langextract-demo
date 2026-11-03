@@ -63,7 +63,9 @@ exemple `!`, `$`, `#`, `-` ou `_`), sans espace ni autre caractère blanc.
 Dans `.env`, entourer le token de guillemets simples si nécessaire pour préserver
 les caractères spéciaux. Ne pas réutiliser un exemple public comme secret.
 `.env` est chargé par Python, sans exécution shell ni interpolation de `${…}`.
-Les variables déjà définies dans l’environnement sont prioritaires.
+Comme dans le lanceur Streamlit d’origine, les valeurs présentes dans `.env`
+sont prioritaires sur les variables héritées du shell ou du superviseur.
+Les variables absentes de `.env` restent lues dans l’environnement.
 
 ## API
 

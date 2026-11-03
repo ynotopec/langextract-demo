@@ -39,7 +39,9 @@ class Settings:
 
     @classmethod
     def from_env(cls):
-        load_dotenv(Path(__file__).with_name(".env"), interpolate=False)
+        # Match the original run.sh: the project .env overrides inherited values.
+        # Keep secrets literal rather than executing the file as shell code.
+        load_dotenv(Path(__file__).with_name(".env"), interpolate=False, override=True)
         return cls(
             api_token=os.getenv("API_TOKEN", ""),
             model=os.getenv("OPENAI_API_MODEL", "mistral-small-vllm"),

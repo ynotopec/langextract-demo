@@ -397,3 +397,68 @@ def test_post_inference_failure_reports_actual_stage(endpoint, tmp_path, stage, 
     assert response.status_code == 500
     assert json.loads(logged.call_args.args[0])["stage"] == stage
     assert "secret document" not in response.text + logged.call_args.args[0]
+
+
+def test_project_dotenv_overrides_inherited_settings_like_original_launcher(
+    tmp_path, monkeypatch
+):
+    import os
+    import subprocess
+    import sys
+
+    values = {
+        "API_TOKEN": "Synthetic1!local",
+        "OPENAI_API_KEY": "synthetic-${LITERAL}-$-#-local-key",
+        "OPENAI_API_BASE": "http://127.0.0.1:8000/v1",
+        "OPENAI_API_MODEL": "local-model-alias",
+        "USE_OPENAI_JSON_MODE": "0",
+    }
+    env_file = tmp_path / ".env"
+    env_file.write_text(
+        "\n".join(f"export {name}='{value}'" for name, value in values.items()) + "\n"
+    )
+    for name in values:
+        monkeypatch.setenv(name, "synthetic-stale-inherited-value")
+    monkeypatch.setenv("MAX_TEXT_CHARS", "123456")
+    monkeypatch.setattr("app.__file__", str(tmp_path / "app.py"))
+    # Baseline: the original launcher sourced the project .env after inheritance.
+    original = subprocess.run(
+        [
+            "bash",
+            "-c",
+            'set -a; source "$1"; "$2" -c "$3"',
+            "test",
+            str(env_file),
+            sys.executable,
+            "import json,os; print(json.dumps({k:os.environ[k] for k in "
+            + repr(list(values))
+            + "}))",
+        ],
+        env=dict(os.environ),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert json.loads(original.stdout) == values
+    settings = Settings.from_env()
+    assert settings.api_token == values["API_TOKEN"]
+    assert settings.model_key == values["OPENAI_API_KEY"]
+    assert settings.base_url == values["OPENAI_API_BASE"]
+    assert settings.model == values["OPENAI_API_MODEL"]
+    assert settings.json_mode is False
+    assert settings.max_text_chars == 123456  # No .env entry: preserve inheritance.
+
+
+def test_environment_only_configuration_still_works_without_dotenv(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr("app.__file__", str(tmp_path / "app.py"))
+    monkeypatch.setenv("API_TOKEN", "Synthetic1!env")
+    monkeypatch.setenv("OPENAI_API_KEY", "synthetic-environment-only-key")
+    monkeypatch.setenv("OPENAI_API_BASE", "http://127.0.0.1:8001/v1")
+    monkeypatch.setenv("OPENAI_API_MODEL", "environment-model")
+    settings = Settings.from_env()
+    assert settings.api_token == "Synthetic1!env"
+    assert settings.model_key == "synthetic-environment-only-key"
+    assert settings.base_url == "http://127.0.0.1:8001/v1"
+    assert settings.model == "environment-model"
