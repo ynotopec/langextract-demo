@@ -1,0 +1,156 @@
+[
+  {
+    "test": "docs",
+    "status": 200,
+    "seconds": 8.28,
+    "headers": {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+      "content-security-policy": "frame-ancestors 'none'",
+      "x-content-type-options": "nosniff"
+    },
+    "swagger_ui": true
+  },
+  {
+    "test": "health",
+    "status": 200,
+    "seconds": 0.16,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "no-store",
+      "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; frame-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff"
+    },
+    "body": {
+      "status": "ok"
+    }
+  },
+  {
+    "test": "config_no_token",
+    "status": 401,
+    "seconds": 0.17,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "no-store",
+      "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; frame-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff",
+      "www-authenticate": "Bearer"
+    },
+    "body": {
+      "detail": "Token absent ou invalide."
+    }
+  },
+  {
+    "test": "config_bad_token",
+    "status": 401
+  },
+  {
+    "test": "config_valid_token",
+    "status": 200,
+    "seconds": 0.16,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "no-store",
+      "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; frame-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff"
+    },
+    "config": {
+      "max_upload_bytes": 20971520,
+      "default_keys": [
+        "prompt",
+        "extraction_passes",
+        "max_workers",
+        "max_char_buffer",
+        "include_text"
+      ],
+      "default_prompt_length": 543
+    }
+  },
+  {
+    "test": "upload_no_token",
+    "status": 401,
+    "seconds": 0.16,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "no-store",
+      "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; frame-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff",
+      "www-authenticate": "Bearer"
+    },
+    "body": {
+      "detail": "Token absent ou invalide."
+    }
+  },
+  {
+    "test": "invalid_pdf",
+    "status": 422,
+    "seconds": 0.16,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "no-store",
+      "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; frame-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff"
+    },
+    "body": {
+      "detail": "Le fichier doit être un PDF valide."
+    }
+  },
+  {
+    "test": "invalid_options",
+    "status": 422,
+    "seconds": 0.16,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "no-store",
+      "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; frame-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff"
+    },
+    "body": {
+      "detail": "Paramètres invalides : prompt (1–10000 caractères), passes (1–5), workers (1–24), segment (500–4000)."
+    }
+  },
+  {
+    "test": "synthetic_extraction",
+    "status": 200,
+    "seconds": 1.56,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "no-store",
+      "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; frame-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff"
+    },
+    "result": {
+      "entities": 3,
+      "classes": [
+        "amount",
+        "org",
+        "invoice"
+      ],
+      "jsonl_valid": true,
+      "html_present": true,
+      "text_present": true,
+      "warnings": []
+    }
+  },
+  {
+    "test": "http_redirect",
+    "status": 200,
+    "headers": {},
+    "content_type": "text/html; charset=utf-8",
+    "swagger_ui": true,
+    "https_link_redirect": false
+  },
+  {
+    "test": "cors_untrusted_origin",
+    "status": 405,
+    "headers": {}
+  },
+  {
+    "test": "docs_external_assets",
+    "urls": [
+      "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css",
+      "https://fastapi.tiangolo.com/img/favicon.png",
+      "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"
+    ]
+  }
+]
