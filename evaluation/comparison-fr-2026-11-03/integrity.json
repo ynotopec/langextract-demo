@@ -1,0 +1,15 @@
+{
+  "documents": 40,
+  "pages": 44,
+  "reference_occurrences": 158,
+  "jobs": 240,
+  "llm_post_calls": 368,
+  "raw_response_model": "qwen3.6",
+  "pdf_hashes_validated": true,
+  "response_archive_records": 240,
+  "generation_parameters_checked_per_call": true,
+  "credential_exclusion_checked": true,
+  "scoring_and_comparison_unit_tests_passed": 8,
+  "report_pages_visually_inspected": 4,
+  "corpus_pages_rendered_and_inspected": 44
+}

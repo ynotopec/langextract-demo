@@ -1,0 +1,10 @@
+{
+  "scope": "controlled local orchestration client, not inference server hardware",
+  "python": "3.12.14",
+  "packages": {
+    "langextract": "1.7.1",
+    "httpx": "0.28.1",
+    "openai": "3.42.1",
+    "pdfplumber": "0.11.10"
+  }
+}

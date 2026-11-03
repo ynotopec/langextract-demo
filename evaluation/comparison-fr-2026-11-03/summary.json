@@ -1,0 +1,3396 @@
+{
+  "overview": {
+    "direct": {
+      "tp": 306,
+      "fp": 4,
+      "fn": 10,
+      "predicted": 310,
+      "source_grounded": 310,
+      "offset_valid": 310,
+      "jobs": 80,
+      "successes": 80,
+      "precision": 0.9870967741935484,
+      "recall": 0.9683544303797469,
+      "f1": 0.9776357827476039,
+      "median_seconds": 1.2834500000000002,
+      "mean_seconds": 1.54919,
+      "p95_seconds_descriptive": 2.5241,
+      "http_calls": 80,
+      "usage_complete": true,
+      "tokens": {
+        "prompt_tokens": 45998,
+        "completion_tokens": 9402,
+        "total_tokens": 55400
+      }
+    },
+    "langextract-1": {
+      "tp": 306,
+      "fp": 4,
+      "fn": 10,
+      "predicted": 310,
+      "source_grounded": 310,
+      "offset_valid": 310,
+      "jobs": 80,
+      "successes": 80,
+      "precision": 0.9870967741935484,
+      "recall": 0.9683544303797469,
+      "f1": 0.9776357827476039,
+      "median_seconds": 1.2800500000000001,
+      "mean_seconds": 1.534535,
+      "p95_seconds_descriptive": 2.6533,
+      "http_calls": 96,
+      "usage_complete": true,
+      "tokens": {
+        "prompt_tokens": 53318,
+        "completion_tokens": 9614,
+        "total_tokens": 62932
+      }
+    },
+    "langextract-2": {
+      "tp": 308,
+      "fp": 6,
+      "fn": 8,
+      "predicted": 314,
+      "source_grounded": 314,
+      "offset_valid": 314,
+      "jobs": 80,
+      "successes": 80,
+      "precision": 0.9808917197452229,
+      "recall": 0.9746835443037974,
+      "f1": 0.9777777777777777,
+      "median_seconds": 2.53385,
+      "mean_seconds": 3.1033749999999998,
+      "p95_seconds_descriptive": 5.4588,
+      "http_calls": 192,
+      "usage_complete": true,
+      "tokens": {
+        "prompt_tokens": 106636,
+        "completion_tokens": 19329,
+        "total_tokens": 125965
+      }
+    }
+  },
+  "stability": {
+    "direct": {
+      "identical_entity_multisets": 34,
+      "documents": 40,
+      "negative_successes": 8,
+      "negative_jobs": 8
+    },
+    "langextract-1": {
+      "identical_entity_multisets": 38,
+      "documents": 40,
+      "negative_successes": 8,
+      "negative_jobs": 8
+    },
+    "langextract-2": {
+      "identical_entity_multisets": 40,
+      "documents": 40,
+      "negative_successes": 8,
+      "negative_jobs": 8
+    }
+  },
+  "by_class": {
+    "direct": {
+      "amount": {
+        "tp": 45,
+        "fn": 1
+      },
+      "date": {
+        "tp": 72
+      },
+      "email": {
+        "tp": 8
+      },
+      "invoice": {
+        "tp": 4
+      },
+      "org": {
+        "tp": 83,
+        "fp": 4,
+        "fn": 5
+      },
+      "person": {
+        "tp": 32,
+        "fn": 2
+      },
+      "ref": {
+        "tp": 62,
+        "fn": 2
+      }
+    },
+    "langextract-1": {
+      "amount": {
+        "tp": 45,
+        "fn": 1
+      },
+      "date": {
+        "tp": 72
+      },
+      "email": {
+        "tp": 8
+      },
+      "invoice": {
+        "tp": 4
+      },
+      "org": {
+        "tp": 85,
+        "fp": 4,
+        "fn": 3
+      },
+      "person": {
+        "tp": 32,
+        "fn": 2
+      },
+      "ref": {
+        "tp": 60,
+        "fn": 4
+      }
+    },
+    "langextract-2": {
+      "amount": {
+        "tp": 46
+      },
+      "date": {
+        "tp": 72
+      },
+      "email": {
+        "tp": 8
+      },
+      "invoice": {
+        "tp": 4
+      },
+      "org": {
+        "tp": 86,
+        "fp": 6,
+        "fn": 2
+      },
+      "person": {
+        "tp": 30,
+        "fn": 4
+      },
+      "ref": {
+        "tp": 62,
+        "fn": 2
+      }
+    }
+  },
+  "by_case": [
+    {
+      "case": "fr-01",
+      "title": "Facture avec taxes",
+      "gold_occurrences": 5,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.7267000000000001,
+          "mean_seconds": 1.7267000000000001,
+          "p95_seconds_descriptive": 2.1572,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1056,
+            "completion_tokens": 308,
+            "total_tokens": 1364
+          }
+        },
+        "langextract-1": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.6104,
+          "mean_seconds": 1.6104,
+          "p95_seconds_descriptive": 1.9124,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1056,
+            "completion_tokens": 308,
+            "total_tokens": 1364
+          }
+        },
+        "langextract-2": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 3.3955,
+          "mean_seconds": 3.3955,
+          "p95_seconds_descriptive": 4.2435,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2112,
+            "completion_tokens": 616,
+            "total_tokens": 2728
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-02",
+      "title": "Bon de commande",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.4886,
+          "mean_seconds": 1.4886,
+          "p95_seconds_descriptive": 1.8456,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1042,
+            "completion_tokens": 262,
+            "total_tokens": 1304
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.5226,
+          "mean_seconds": 1.5226,
+          "p95_seconds_descriptive": 1.6473,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1042,
+            "completion_tokens": 262,
+            "total_tokens": 1304
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.8015,
+          "mean_seconds": 2.8015,
+          "p95_seconds_descriptive": 3.3243,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2084,
+            "completion_tokens": 524,
+            "total_tokens": 2608
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-03",
+      "title": "Contrat entre deux parties",
+      "gold_occurrences": 6,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 12,
+          "source_grounded": 12,
+          "offset_valid": 12,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.7623499999999999,
+          "mean_seconds": 1.7623499999999999,
+          "p95_seconds_descriptive": 2.1205,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1042,
+            "completion_tokens": 346,
+            "total_tokens": 1388
+          }
+        },
+        "langextract-1": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 12,
+          "source_grounded": 12,
+          "offset_valid": 12,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.41775,
+          "mean_seconds": 1.41775,
+          "p95_seconds_descriptive": 1.441,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1042,
+            "completion_tokens": 346,
+            "total_tokens": 1388
+          }
+        },
+        "langextract-2": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 12,
+          "source_grounded": 12,
+          "offset_valid": 12,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 3.46635,
+          "mean_seconds": 3.46635,
+          "p95_seconds_descriptive": 4.1678,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2084,
+            "completion_tokens": 692,
+            "total_tokens": 2776
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-04",
+      "title": "Avenant avec montant annulé",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.4555,
+          "mean_seconds": 1.4555,
+          "p95_seconds_descriptive": 1.7961,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1070,
+            "completion_tokens": 250,
+            "total_tokens": 1320
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.417,
+          "mean_seconds": 1.417,
+          "p95_seconds_descriptive": 1.6897,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1070,
+            "completion_tokens": 250,
+            "total_tokens": 1320
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.2632,
+          "mean_seconds": 2.2632,
+          "p95_seconds_descriptive": 2.2876,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2140,
+            "completion_tokens": 500,
+            "total_tokens": 2640
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-05",
+      "title": "Courrier de réception",
+      "gold_occurrences": 5,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 1,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 0.9,
+          "recall": 0.9,
+          "f1": 0.9,
+          "median_seconds": 1.23285,
+          "mean_seconds": 1.23285,
+          "p95_seconds_descriptive": 1.2794,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1020,
+            "completion_tokens": 276,
+            "total_tokens": 1296
+          }
+        },
+        "langextract-1": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.76505,
+          "mean_seconds": 1.76505,
+          "p95_seconds_descriptive": 1.7913,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1020,
+            "completion_tokens": 276,
+            "total_tokens": 1296
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 2,
+          "fn": 2,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 0.8,
+          "recall": 0.8,
+          "f1": 0.8,
+          "median_seconds": 3.9108,
+          "mean_seconds": 3.9108,
+          "p95_seconds_descriptive": 3.9981,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2040,
+            "completion_tokens": 552,
+            "total_tokens": 2592
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-06",
+      "title": "Décision attributive",
+      "gold_occurrences": 5,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 9,
+          "fp": 0,
+          "fn": 1,
+          "predicted": 9,
+          "source_grounded": 9,
+          "offset_valid": 9,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 0.9,
+          "f1": 0.9473684210526315,
+          "median_seconds": 1.1883,
+          "mean_seconds": 1.1883,
+          "p95_seconds_descriptive": 1.263,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1042,
+            "completion_tokens": 275,
+            "total_tokens": 1317
+          }
+        },
+        "langextract-1": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.26465,
+          "mean_seconds": 1.26465,
+          "p95_seconds_descriptive": 1.2776,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1042,
+            "completion_tokens": 302,
+            "total_tokens": 1344
+          }
+        },
+        "langextract-2": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 3.19035,
+          "mean_seconds": 3.19035,
+          "p95_seconds_descriptive": 3.8119,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2084,
+            "completion_tokens": 604,
+            "total_tokens": 2688
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-07",
+      "title": "Procès-verbal de réception",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.05585,
+          "mean_seconds": 1.05585,
+          "p95_seconds_descriptive": 1.0585,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1034,
+            "completion_tokens": 238,
+            "total_tokens": 1272
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.04475,
+          "mean_seconds": 1.04475,
+          "p95_seconds_descriptive": 1.0698,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1034,
+            "completion_tokens": 238,
+            "total_tokens": 1272
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.7526,
+          "mean_seconds": 2.7526,
+          "p95_seconds_descriptive": 3.4149,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2068,
+            "completion_tokens": 476,
+            "total_tokens": 2544
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-08",
+      "title": "Rapport d’incident",
+      "gold_occurrences": 5,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8888888888888888,
+          "median_seconds": 1.28085,
+          "mean_seconds": 1.28085,
+          "p95_seconds_descriptive": 1.5091,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1026,
+            "completion_tokens": 228,
+            "total_tokens": 1254
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8888888888888888,
+          "median_seconds": 2.8805,
+          "mean_seconds": 2.8805,
+          "p95_seconds_descriptive": 4.6986,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1026,
+            "completion_tokens": 228,
+            "total_tokens": 1254
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8888888888888888,
+          "median_seconds": 2.508,
+          "mean_seconds": 2.508,
+          "p95_seconds_descriptive": 2.9817,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2052,
+            "completion_tokens": 456,
+            "total_tokens": 2508
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-09",
+      "title": "Note de nomination",
+      "gold_occurrences": 3,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 5,
+          "fp": 1,
+          "fn": 1,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 0.8333333333333334,
+          "recall": 0.8333333333333334,
+          "f1": 0.8333333333333334,
+          "median_seconds": 1.10995,
+          "mean_seconds": 1.10995,
+          "p95_seconds_descriptive": 1.3109,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1010,
+            "completion_tokens": 182,
+            "total_tokens": 1192
+          }
+        },
+        "langextract-1": {
+          "tp": 4,
+          "fp": 2,
+          "fn": 2,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 0.6666666666666666,
+          "recall": 0.6666666666666666,
+          "f1": 0.6666666666666666,
+          "median_seconds": 0.9176,
+          "mean_seconds": 0.9176,
+          "p95_seconds_descriptive": 0.9412,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1010,
+            "completion_tokens": 182,
+            "total_tokens": 1192
+          }
+        },
+        "langextract-2": {
+          "tp": 4,
+          "fp": 2,
+          "fn": 2,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 0.6666666666666666,
+          "recall": 0.6666666666666666,
+          "f1": 0.6666666666666666,
+          "median_seconds": 2.3297,
+          "mean_seconds": 2.3297,
+          "p95_seconds_descriptive": 2.8525,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2020,
+            "completion_tokens": 364,
+            "total_tokens": 2384
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-10",
+      "title": "Convention de subvention",
+      "gold_occurrences": 5,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.6944499999999998,
+          "mean_seconds": 1.6944499999999998,
+          "p95_seconds_descriptive": 2.1247,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1034,
+            "completion_tokens": 298,
+            "total_tokens": 1332
+          }
+        },
+        "langextract-1": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 6.95875,
+          "mean_seconds": 6.95875,
+          "p95_seconds_descriptive": 12.0791,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1034,
+            "completion_tokens": 298,
+            "total_tokens": 1332
+          }
+        },
+        "langextract-2": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 3.3417499999999998,
+          "mean_seconds": 3.3417499999999998,
+          "p95_seconds_descriptive": 4.1633,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2068,
+            "completion_tokens": 596,
+            "total_tokens": 2664
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-11",
+      "title": "Attestation sans montant",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.6163500000000002,
+          "mean_seconds": 1.6163500000000002,
+          "p95_seconds_descriptive": 1.6811,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1020,
+            "completion_tokens": 238,
+            "total_tokens": 1258
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.2922,
+          "mean_seconds": 1.2922,
+          "p95_seconds_descriptive": 1.5223,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1020,
+            "completion_tokens": 238,
+            "total_tokens": 1258
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.14885,
+          "mean_seconds": 2.14885,
+          "p95_seconds_descriptive": 2.1542,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2040,
+            "completion_tokens": 476,
+            "total_tokens": 2516
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-12",
+      "title": "Notification avec date remplacée",
+      "gold_occurrences": 3,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.099,
+          "mean_seconds": 1.099,
+          "p95_seconds_descriptive": 1.3002,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1040,
+            "completion_tokens": 192,
+            "total_tokens": 1232
+          }
+        },
+        "langextract-1": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 0.8892500000000001,
+          "mean_seconds": 0.8892500000000001,
+          "p95_seconds_descriptive": 0.906,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1040,
+            "completion_tokens": 192,
+            "total_tokens": 1232
+          }
+        },
+        "langextract-2": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.8145,
+          "mean_seconds": 1.8145,
+          "p95_seconds_descriptive": 1.8385,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2080,
+            "completion_tokens": 384,
+            "total_tokens": 2464
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-13",
+      "title": "Demande de remboursement",
+      "gold_occurrences": 5,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 3.1532,
+          "mean_seconds": 3.1532,
+          "p95_seconds_descriptive": 5.0667,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1034,
+            "completion_tokens": 294,
+            "total_tokens": 1328
+          }
+        },
+        "langextract-1": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.7737499999999997,
+          "mean_seconds": 2.7737499999999997,
+          "p95_seconds_descriptive": 4.0504,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1034,
+            "completion_tokens": 294,
+            "total_tokens": 1328
+          }
+        },
+        "langextract-2": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.4576000000000002,
+          "mean_seconds": 2.4576000000000002,
+          "p95_seconds_descriptive": 2.4896,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2068,
+            "completion_tokens": 588,
+            "total_tokens": 2656
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-14",
+      "title": "Bordereau de transmission",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.34265,
+          "mean_seconds": 1.34265,
+          "p95_seconds_descriptive": 1.5658,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1030,
+            "completion_tokens": 242,
+            "total_tokens": 1272
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.11745,
+          "mean_seconds": 1.11745,
+          "p95_seconds_descriptive": 1.1405,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1030,
+            "completion_tokens": 242,
+            "total_tokens": 1272
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.8204000000000002,
+          "mean_seconds": 2.8204000000000002,
+          "p95_seconds_descriptive": 3.5106,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2060,
+            "completion_tokens": 484,
+            "total_tokens": 2544
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-15",
+      "title": "Compte rendu sans références",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.2085,
+          "mean_seconds": 1.2085,
+          "p95_seconds_descriptive": 1.3599,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1020,
+            "completion_tokens": 230,
+            "total_tokens": 1250
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.26085,
+          "mean_seconds": 1.26085,
+          "p95_seconds_descriptive": 1.4807,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1020,
+            "completion_tokens": 230,
+            "total_tokens": 1250
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.55635,
+          "mean_seconds": 2.55635,
+          "p95_seconds_descriptive": 3.0536,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2040,
+            "completion_tokens": 460,
+            "total_tokens": 2500
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-16",
+      "title": "Deux devis et décision finale",
+      "gold_occurrences": 5,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.53925,
+          "mean_seconds": 1.53925,
+          "p95_seconds_descriptive": 1.8156,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1046,
+            "completion_tokens": 294,
+            "total_tokens": 1340
+          }
+        },
+        "langextract-1": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.2624,
+          "mean_seconds": 1.2624,
+          "p95_seconds_descriptive": 1.2628,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1046,
+            "completion_tokens": 294,
+            "total_tokens": 1340
+          }
+        },
+        "langextract-2": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 3.8776,
+          "mean_seconds": 3.8776,
+          "p95_seconds_descriptive": 4.0909,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2092,
+            "completion_tokens": 588,
+            "total_tokens": 2680
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-17",
+      "title": "Tableau de paiements",
+      "gold_occurrences": 7,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 14,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 14,
+          "source_grounded": 14,
+          "offset_valid": 14,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.6369999999999996,
+          "mean_seconds": 2.6369999999999996,
+          "p95_seconds_descriptive": 2.7499,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1074,
+            "completion_tokens": 410,
+            "total_tokens": 1484
+          }
+        },
+        "langextract-1": {
+          "tp": 14,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 14,
+          "source_grounded": 14,
+          "offset_valid": 14,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.2391,
+          "mean_seconds": 2.2391,
+          "p95_seconds_descriptive": 2.799,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1074,
+            "completion_tokens": 410,
+            "total_tokens": 1484
+          }
+        },
+        "langextract-2": {
+          "tp": 14,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 14,
+          "source_grounded": 14,
+          "offset_valid": 14,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 3.2436,
+          "mean_seconds": 3.2436,
+          "p95_seconds_descriptive": 3.3433,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2148,
+            "completion_tokens": 793,
+            "total_tokens": 2941
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-18",
+      "title": "Tableau avec case vide",
+      "gold_occurrences": 6,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 12,
+          "source_grounded": 12,
+          "offset_valid": 12,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.4455,
+          "mean_seconds": 1.4455,
+          "p95_seconds_descriptive": 1.4514,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1080,
+            "completion_tokens": 354,
+            "total_tokens": 1434
+          }
+        },
+        "langextract-1": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 12,
+          "source_grounded": 12,
+          "offset_valid": 12,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.7884,
+          "mean_seconds": 1.7884,
+          "p95_seconds_descriptive": 2.1311,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1080,
+            "completion_tokens": 354,
+            "total_tokens": 1434
+          }
+        },
+        "langextract-2": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 12,
+          "source_grounded": 12,
+          "offset_valid": 12,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 9.1646,
+          "mean_seconds": 9.1646,
+          "p95_seconds_descriptive": 15.4238,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2160,
+            "completion_tokens": 708,
+            "total_tokens": 2868
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-19",
+      "title": "Nom avec accents",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 6,
+          "fp": 2,
+          "fn": 2,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 0.75,
+          "recall": 0.75,
+          "f1": 0.75,
+          "median_seconds": 1.1332499999999999,
+          "mean_seconds": 1.1332499999999999,
+          "p95_seconds_descriptive": 1.1512,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1026,
+            "completion_tokens": 254,
+            "total_tokens": 1280
+          }
+        },
+        "langextract-1": {
+          "tp": 6,
+          "fp": 2,
+          "fn": 2,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 0.75,
+          "recall": 0.75,
+          "f1": 0.75,
+          "median_seconds": 1.39565,
+          "mean_seconds": 1.39565,
+          "p95_seconds_descriptive": 1.6852,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1026,
+            "completion_tokens": 254,
+            "total_tokens": 1280
+          }
+        },
+        "langextract-2": {
+          "tp": 6,
+          "fp": 2,
+          "fn": 2,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 0.75,
+          "recall": 0.75,
+          "f1": 0.75,
+          "median_seconds": 2.44585,
+          "mean_seconds": 2.44585,
+          "p95_seconds_descriptive": 2.6823,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2052,
+            "completion_tokens": 508,
+            "total_tokens": 2560
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-20",
+      "title": "Noms répétés",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.35945,
+          "mean_seconds": 1.35945,
+          "p95_seconds_descriptive": 1.6793,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1006,
+            "completion_tokens": 234,
+            "total_tokens": 1240
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.3765,
+          "mean_seconds": 1.3765,
+          "p95_seconds_descriptive": 1.6781,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1006,
+            "completion_tokens": 234,
+            "total_tokens": 1240
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.0759499999999997,
+          "mean_seconds": 2.0759499999999997,
+          "p95_seconds_descriptive": 2.0951,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2012,
+            "completion_tokens": 468,
+            "total_tokens": 2480
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-21",
+      "title": "Pluridevises sans conversion",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.40565,
+          "mean_seconds": 1.40565,
+          "p95_seconds_descriptive": 1.7439,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1030,
+            "completion_tokens": 240,
+            "total_tokens": 1270
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.0573,
+          "mean_seconds": 1.0573,
+          "p95_seconds_descriptive": 1.0815,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1030,
+            "completion_tokens": 240,
+            "total_tokens": 1270
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.08315,
+          "mean_seconds": 2.08315,
+          "p95_seconds_descriptive": 2.0906,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2060,
+            "completion_tokens": 480,
+            "total_tokens": 2540
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-22",
+      "title": "Année et nombres distracteurs",
+      "gold_occurrences": 3,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.1622,
+          "mean_seconds": 1.1622,
+          "p95_seconds_descriptive": 1.4314,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1038,
+            "completion_tokens": 186,
+            "total_tokens": 1224
+          }
+        },
+        "langextract-1": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.3209499999999998,
+          "mean_seconds": 1.3209499999999998,
+          "p95_seconds_descriptive": 1.3594,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1038,
+            "completion_tokens": 186,
+            "total_tokens": 1224
+          }
+        },
+        "langextract-2": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.1383,
+          "mean_seconds": 2.1383,
+          "p95_seconds_descriptive": 2.4867,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2076,
+            "completion_tokens": 372,
+            "total_tokens": 2448
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-23",
+      "title": "Référence coupée du libellé",
+      "gold_occurrences": 3,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 5,
+          "fp": 0,
+          "fn": 1,
+          "predicted": 5,
+          "source_grounded": 5,
+          "offset_valid": 5,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 0.8333333333333334,
+          "f1": 0.9090909090909091,
+          "median_seconds": 1.16575,
+          "mean_seconds": 1.16575,
+          "p95_seconds_descriptive": 1.2875,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1018,
+            "completion_tokens": 164,
+            "total_tokens": 1182
+          }
+        },
+        "langextract-1": {
+          "tp": 5,
+          "fp": 0,
+          "fn": 1,
+          "predicted": 5,
+          "source_grounded": 5,
+          "offset_valid": 5,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 0.8333333333333334,
+          "f1": 0.9090909090909091,
+          "median_seconds": 0.8399,
+          "mean_seconds": 0.8399,
+          "p95_seconds_descriptive": 0.9053,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1018,
+            "completion_tokens": 164,
+            "total_tokens": 1182
+          }
+        },
+        "langextract-2": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.05955,
+          "mean_seconds": 2.05955,
+          "p95_seconds_descriptive": 2.3393,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2036,
+            "completion_tokens": 354,
+            "total_tokens": 2390
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-24",
+      "title": "Référence entre parenthèses",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.4249,
+          "mean_seconds": 1.4249,
+          "p95_seconds_descriptive": 1.7674,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1026,
+            "completion_tokens": 244,
+            "total_tokens": 1270
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.6698499999999998,
+          "mean_seconds": 1.6698499999999998,
+          "p95_seconds_descriptive": 1.7628,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1026,
+            "completion_tokens": 244,
+            "total_tokens": 1270
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.1534500000000003,
+          "mean_seconds": 2.1534500000000003,
+          "p95_seconds_descriptive": 2.1566,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2052,
+            "completion_tokens": 488,
+            "total_tokens": 2540
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-25",
+      "title": "Deux contacts distincts",
+      "gold_occurrences": 5,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.23655,
+          "mean_seconds": 1.23655,
+          "p95_seconds_descriptive": 1.3186,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1006,
+            "completion_tokens": 268,
+            "total_tokens": 1274
+          }
+        },
+        "langextract-1": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.37425,
+          "mean_seconds": 1.37425,
+          "p95_seconds_descriptive": 1.5845,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1006,
+            "completion_tokens": 268,
+            "total_tokens": 1274
+          }
+        },
+        "langextract-2": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.3477,
+          "mean_seconds": 2.3477,
+          "p95_seconds_descriptive": 2.3483,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2012,
+            "completion_tokens": 536,
+            "total_tokens": 2548
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-26",
+      "title": "Montant écrit en lettres",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 1,
+          "predicted": 7,
+          "source_grounded": 7,
+          "offset_valid": 7,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 0.875,
+          "f1": 0.9333333333333333,
+          "median_seconds": 1.5045,
+          "mean_seconds": 1.5045,
+          "p95_seconds_descriptive": 1.6398,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1008,
+            "completion_tokens": 210,
+            "total_tokens": 1218
+          }
+        },
+        "langextract-1": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 1,
+          "predicted": 7,
+          "source_grounded": 7,
+          "offset_valid": 7,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 0.875,
+          "f1": 0.9333333333333333,
+          "median_seconds": 1.157,
+          "mean_seconds": 1.157,
+          "p95_seconds_descriptive": 1.4461,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1008,
+            "completion_tokens": 210,
+            "total_tokens": 1218
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.1047000000000002,
+          "mean_seconds": 2.1047000000000002,
+          "p95_seconds_descriptive": 2.1263,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2016,
+            "completion_tokens": 468,
+            "total_tokens": 2484
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-27",
+      "title": "Négation sans annulation de parties",
+      "gold_occurrences": 3,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 0.9053,
+          "mean_seconds": 0.9053,
+          "p95_seconds_descriptive": 0.9126,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1048,
+            "completion_tokens": 190,
+            "total_tokens": 1238
+          }
+        },
+        "langextract-1": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.18465,
+          "mean_seconds": 1.18465,
+          "p95_seconds_descriptive": 1.4641,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1048,
+            "completion_tokens": 190,
+            "total_tokens": 1238
+          }
+        },
+        "langextract-2": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.70075,
+          "mean_seconds": 2.70075,
+          "p95_seconds_descriptive": 2.8487,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2096,
+            "completion_tokens": 380,
+            "total_tokens": 2476
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-28",
+      "title": "Pièces jointes et instruction documentaire",
+      "gold_occurrences": 3,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 0.9030499999999999,
+          "mean_seconds": 0.9030499999999999,
+          "p95_seconds_descriptive": 0.9057,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1048,
+            "completion_tokens": 190,
+            "total_tokens": 1238
+          }
+        },
+        "langextract-1": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 0.90055,
+          "mean_seconds": 0.90055,
+          "p95_seconds_descriptive": 0.9014,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1048,
+            "completion_tokens": 190,
+            "total_tokens": 1238
+          }
+        },
+        "langextract-2": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.4278500000000003,
+          "mean_seconds": 2.4278500000000003,
+          "p95_seconds_descriptive": 2.8692,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2096,
+            "completion_tokens": 380,
+            "total_tokens": 2476
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-29",
+      "title": "Facture et avoir sans calcul",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.35455,
+          "mean_seconds": 1.35455,
+          "p95_seconds_descriptive": 1.6195,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1050,
+            "completion_tokens": 250,
+            "total_tokens": 1300
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.086,
+          "mean_seconds": 1.086,
+          "p95_seconds_descriptive": 1.1121,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1050,
+            "completion_tokens": 250,
+            "total_tokens": 1300
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 3.1487,
+          "mean_seconds": 3.1487,
+          "p95_seconds_descriptive": 3.1637,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2100,
+            "completion_tokens": 500,
+            "total_tokens": 2600
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-30",
+      "title": "Dates de période",
+      "gold_occurrences": 5,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.704,
+          "mean_seconds": 1.704,
+          "p95_seconds_descriptive": 2.1016,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1038,
+            "completion_tokens": 300,
+            "total_tokens": 1338
+          }
+        },
+        "langextract-1": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.71935,
+          "mean_seconds": 1.71935,
+          "p95_seconds_descriptive": 2.1264,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1038,
+            "completion_tokens": 300,
+            "total_tokens": 1338
+          }
+        },
+        "langextract-2": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 3.1628,
+          "mean_seconds": 3.1628,
+          "p95_seconds_descriptive": 3.7563,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2076,
+            "completion_tokens": 600,
+            "total_tokens": 2676
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-31",
+      "title": "Bloc de signature",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.7097,
+          "mean_seconds": 1.7097,
+          "p95_seconds_descriptive": 1.7783,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1014,
+            "completion_tokens": 246,
+            "total_tokens": 1260
+          }
+        },
+        "langextract-1": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 2,
+          "predicted": 6,
+          "source_grounded": 6,
+          "offset_valid": 6,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.8571428571428571,
+          "median_seconds": 0.92405,
+          "mean_seconds": 0.92405,
+          "p95_seconds_descriptive": 0.9426,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1014,
+            "completion_tokens": 192,
+            "total_tokens": 1206
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.4692499999999997,
+          "mean_seconds": 2.4692499999999997,
+          "p95_seconds_descriptive": 2.9271,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2028,
+            "completion_tokens": 438,
+            "total_tokens": 2466
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-32",
+      "title": "Dates numériques françaises",
+      "gold_occurrences": 4,
+      "pages": 1,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.11025,
+          "mean_seconds": 1.11025,
+          "p95_seconds_descriptive": 1.1136,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1026,
+            "completion_tokens": 250,
+            "total_tokens": 1276
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.48465,
+          "mean_seconds": 1.48465,
+          "p95_seconds_descriptive": 1.8545,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1026,
+            "completion_tokens": 250,
+            "total_tokens": 1276
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.956,
+          "mean_seconds": 2.956,
+          "p95_seconds_descriptive": 3.2389,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2052,
+            "completion_tokens": 500,
+            "total_tokens": 2552
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-33",
+      "title": "Long - entités dispersées",
+      "gold_occurrences": 4,
+      "pages": 2,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 1,
+          "predicted": 7,
+          "source_grounded": 7,
+          "offset_valid": 7,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 0.875,
+          "f1": 0.9333333333333333,
+          "median_seconds": 1.3338999999999999,
+          "mean_seconds": 1.3338999999999999,
+          "p95_seconds_descriptive": 1.662,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2350,
+            "completion_tokens": 221,
+            "total_tokens": 2571
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.34345,
+          "mean_seconds": 2.34345,
+          "p95_seconds_descriptive": 2.6533,
+          "http_calls": 6,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 4180,
+            "completion_tokens": 304,
+            "total_tokens": 4484
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 13.7853,
+          "mean_seconds": 13.7853,
+          "p95_seconds_descriptive": 22.1118,
+          "http_calls": 12,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 8360,
+            "completion_tokens": 608,
+            "total_tokens": 8968
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-34",
+      "title": "Long - répétitions des parties",
+      "gold_occurrences": 5,
+      "pages": 2,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.7011500000000002,
+          "mean_seconds": 1.7011500000000002,
+          "p95_seconds_descriptive": 2.0907,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2126,
+            "completion_tokens": 294,
+            "total_tokens": 2420
+          }
+        },
+        "langextract-1": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.1647,
+          "mean_seconds": 2.1647,
+          "p95_seconds_descriptive": 2.2014,
+          "http_calls": 6,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 3956,
+            "completion_tokens": 350,
+            "total_tokens": 4306
+          }
+        },
+        "langextract-2": {
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 10,
+          "source_grounded": 10,
+          "offset_valid": 10,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 3.9546,
+          "mean_seconds": 3.9546,
+          "p95_seconds_descriptive": 3.9667,
+          "http_calls": 12,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 7912,
+            "completion_tokens": 700,
+            "total_tokens": 8612
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-35",
+      "title": "Long - rectification finale",
+      "gold_occurrences": 4,
+      "pages": 2,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.94965,
+          "mean_seconds": 2.94965,
+          "p95_seconds_descriptive": 4.7081,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2182,
+            "completion_tokens": 248,
+            "total_tokens": 2430
+          }
+        },
+        "langextract-1": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 1.9277,
+          "mean_seconds": 1.9277,
+          "p95_seconds_descriptive": 1.9284,
+          "http_calls": 6,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 4012,
+            "completion_tokens": 298,
+            "total_tokens": 4310
+          }
+        },
+        "langextract-2": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 8,
+          "source_grounded": 8,
+          "offset_valid": 8,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 4.65245,
+          "mean_seconds": 4.65245,
+          "p95_seconds_descriptive": 5.6029,
+          "http_calls": 12,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 8024,
+            "completion_tokens": 596,
+            "total_tokens": 8620
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-36",
+      "title": "Long - tableau en fin de dossier",
+      "gold_occurrences": 7,
+      "pages": 2,
+      "negative": false,
+      "methods": {
+        "direct": {
+          "tp": 14,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 14,
+          "source_grounded": 14,
+          "offset_valid": 14,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.14515,
+          "mean_seconds": 2.14515,
+          "p95_seconds_descriptive": 2.5178,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2172,
+            "completion_tokens": 408,
+            "total_tokens": 2580
+          }
+        },
+        "langextract-1": {
+          "tp": 14,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 14,
+          "source_grounded": 14,
+          "offset_valid": 14,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 2.4797000000000002,
+          "mean_seconds": 2.4797000000000002,
+          "p95_seconds_descriptive": 2.5413,
+          "http_calls": 6,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 4002,
+            "completion_tokens": 458,
+            "total_tokens": 4460
+          }
+        },
+        "langextract-2": {
+          "tp": 14,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 14,
+          "source_grounded": 14,
+          "offset_valid": 14,
+          "jobs": 2,
+          "successes": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "median_seconds": 6.45815,
+          "mean_seconds": 6.45815,
+          "p95_seconds_descriptive": 8.0822,
+          "http_calls": 12,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 8004,
+            "completion_tokens": 916,
+            "total_tokens": 8920
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-37",
+      "title": "Négatif - texte générique",
+      "gold_occurrences": 0,
+      "pages": 1,
+      "negative": true,
+      "methods": {
+        "direct": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 0,
+          "source_grounded": 0,
+          "offset_valid": 0,
+          "jobs": 2,
+          "successes": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "median_seconds": 0.3599,
+          "mean_seconds": 0.3599,
+          "p95_seconds_descriptive": 0.3985,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 988,
+            "completion_tokens": 22,
+            "total_tokens": 1010
+          }
+        },
+        "langextract-1": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 0,
+          "source_grounded": 0,
+          "offset_valid": 0,
+          "jobs": 2,
+          "successes": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "median_seconds": 0.36260000000000003,
+          "mean_seconds": 0.36260000000000003,
+          "p95_seconds_descriptive": 0.3995,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 988,
+            "completion_tokens": 22,
+            "total_tokens": 1010
+          }
+        },
+        "langextract-2": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 0,
+          "source_grounded": 0,
+          "offset_valid": 0,
+          "jobs": 2,
+          "successes": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "median_seconds": 0.7594,
+          "mean_seconds": 0.7594,
+          "p95_seconds_descriptive": 0.8653,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1976,
+            "completion_tokens": 44,
+            "total_tokens": 2020
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-38",
+      "title": "Négatif - valeurs toutes annulées",
+      "gold_occurrences": 0,
+      "pages": 1,
+      "negative": true,
+      "methods": {
+        "direct": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 0,
+          "source_grounded": 0,
+          "offset_valid": 0,
+          "jobs": 2,
+          "successes": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "median_seconds": 0.4015,
+          "mean_seconds": 0.4015,
+          "p95_seconds_descriptive": 0.4242,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1036,
+            "completion_tokens": 22,
+            "total_tokens": 1058
+          }
+        },
+        "langextract-1": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 0,
+          "source_grounded": 0,
+          "offset_valid": 0,
+          "jobs": 2,
+          "successes": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "median_seconds": 0.40345,
+          "mean_seconds": 0.40345,
+          "p95_seconds_descriptive": 0.4669,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1036,
+            "completion_tokens": 22,
+            "total_tokens": 1058
+          }
+        },
+        "langextract-2": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 0,
+          "source_grounded": 0,
+          "offset_valid": 0,
+          "jobs": 2,
+          "successes": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "median_seconds": 0.72375,
+          "mean_seconds": 0.72375,
+          "p95_seconds_descriptive": 0.8378,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2072,
+            "completion_tokens": 44,
+            "total_tokens": 2116
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-39",
+      "title": "Négatif - formulaire non rempli",
+      "gold_occurrences": 0,
+      "pages": 1,
+      "negative": true,
+      "methods": {
+        "direct": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 0,
+          "source_grounded": 0,
+          "offset_valid": 0,
+          "jobs": 2,
+          "successes": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "median_seconds": 0.3669,
+          "mean_seconds": 0.3669,
+          "p95_seconds_descriptive": 0.4066,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1010,
+            "completion_tokens": 22,
+            "total_tokens": 1032
+          }
+        },
+        "langextract-1": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 0,
+          "source_grounded": 0,
+          "offset_valid": 0,
+          "jobs": 2,
+          "successes": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "median_seconds": 0.3758,
+          "mean_seconds": 0.3758,
+          "p95_seconds_descriptive": 0.4192,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1010,
+            "completion_tokens": 22,
+            "total_tokens": 1032
+          }
+        },
+        "langextract-2": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 0,
+          "source_grounded": 0,
+          "offset_valid": 0,
+          "jobs": 2,
+          "successes": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "median_seconds": 0.6541,
+          "mean_seconds": 0.6541,
+          "p95_seconds_descriptive": 0.6551,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2020,
+            "completion_tokens": 44,
+            "total_tokens": 2064
+          }
+        }
+      }
+    },
+    {
+      "case": "fr-40",
+      "title": "Négatif - exemples de formats",
+      "gold_occurrences": 0,
+      "pages": 1,
+      "negative": true,
+      "methods": {
+        "direct": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 0,
+          "source_grounded": 0,
+          "offset_valid": 0,
+          "jobs": 2,
+          "successes": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "median_seconds": 6.5935,
+          "mean_seconds": 6.5935,
+          "p95_seconds_descriptive": 12.8219,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1032,
+            "completion_tokens": 22,
+            "total_tokens": 1054
+          }
+        },
+        "langextract-1": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 0,
+          "source_grounded": 0,
+          "offset_valid": 0,
+          "jobs": 2,
+          "successes": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "median_seconds": 0.4109,
+          "mean_seconds": 0.4109,
+          "p95_seconds_descriptive": 0.4821,
+          "http_calls": 2,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 1032,
+            "completion_tokens": 22,
+            "total_tokens": 1054
+          }
+        },
+        "langextract-2": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "predicted": 0,
+          "source_grounded": 0,
+          "offset_valid": 0,
+          "jobs": 2,
+          "successes": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "median_seconds": 0.8300000000000001,
+          "mean_seconds": 0.8300000000000001,
+          "p95_seconds_descriptive": 0.8468,
+          "http_calls": 4,
+          "usage_complete": true,
+          "tokens": {
+            "prompt_tokens": 2064,
+            "completion_tokens": 44,
+            "total_tokens": 2108
+          }
+        }
+      }
+    }
+  ],
+  "long_documents": {
+    "direct": {
+      "tp": 39,
+      "fp": 0,
+      "fn": 1,
+      "predicted": 39,
+      "source_grounded": 39,
+      "offset_valid": 39,
+      "jobs": 8,
+      "successes": 8,
+      "precision": 1.0,
+      "recall": 0.975,
+      "f1": 0.9873417721518988,
+      "median_seconds": 1.71725,
+      "mean_seconds": 2.0324625,
+      "p95_seconds_descriptive": 4.7081,
+      "http_calls": 8,
+      "usage_complete": true,
+      "tokens": {
+        "prompt_tokens": 8830,
+        "completion_tokens": 1171,
+        "total_tokens": 10001
+      }
+    },
+    "langextract-1": {
+      "tp": 40,
+      "fp": 0,
+      "fn": 0,
+      "predicted": 40,
+      "source_grounded": 40,
+      "offset_valid": 40,
+      "jobs": 8,
+      "successes": 8,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "median_seconds": 2.1647,
+      "mean_seconds": 2.2288875,
+      "p95_seconds_descriptive": 2.6533,
+      "http_calls": 24,
+      "usage_complete": true,
+      "tokens": {
+        "prompt_tokens": 16150,
+        "completion_tokens": 1410,
+        "total_tokens": 17560
+      }
+    },
+    "langextract-2": {
+      "tp": 40,
+      "fp": 0,
+      "fn": 0,
+      "predicted": 40,
+      "source_grounded": 40,
+      "offset_valid": 40,
+      "jobs": 8,
+      "successes": 8,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "median_seconds": 5.14645,
+      "mean_seconds": 7.212625,
+      "p95_seconds_descriptive": 22.1118,
+      "http_calls": 48,
+      "usage_complete": true,
+      "tokens": {
+        "prompt_tokens": 32300,
+        "completion_tokens": 2820,
+        "total_tokens": 35120
+      }
+    }
+  },
+  "alias_before": {
+    "id": "ai-flash",
+    "object": "model",
+    "owned_by": "alias-proxy",
+    "metadata": {
+      "alias": true,
+      "upstream_model": "qwen3.6",
+      "reasoning_effort": "none",
+      "parameters": {},
+      "hidden": false
+    }
+  },
+  "alias_after": {
+    "id": "ai-flash",
+    "object": "model",
+    "owned_by": "alias-proxy",
+    "metadata": {
+      "alias": true,
+      "upstream_model": "qwen3.6",
+      "reasoning_effort": "none",
+      "parameters": {},
+      "hidden": false
+    }
+  },
+  "alias_unchanged": true
+}

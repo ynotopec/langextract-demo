@@ -1,0 +1,62 @@
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "qwen3.6",
+      "object": "model",
+      "created": 1793739009,
+      "owned_by": "sglang",
+      "root": "qwen3.6",
+      "parent": null,
+      "max_model_len": 262144
+    },
+    {
+      "id": "ai-default",
+      "object": "model",
+      "owned_by": "alias-proxy",
+      "metadata": {
+        "alias": true,
+        "upstream_model": "qwen3.6",
+        "reasoning_effort": "none",
+        "parameters": {},
+        "hidden": false
+      }
+    },
+    {
+      "id": "ai-flash",
+      "object": "model",
+      "owned_by": "alias-proxy",
+      "metadata": {
+        "alias": true,
+        "upstream_model": "qwen3.6",
+        "reasoning_effort": "none",
+        "parameters": {},
+        "hidden": false
+      }
+    },
+    {
+      "id": "ai-thinking",
+      "object": "model",
+      "owned_by": "alias-proxy",
+      "metadata": {
+        "alias": true,
+        "upstream_model": "qwen3.6",
+        "reasoning_effort": null,
+        "parameters": {},
+        "hidden": false
+      }
+    },
+    {
+      "id": "ai-vision",
+      "object": "model",
+      "owned_by": "alias-proxy",
+      "metadata": {
+        "alias": true,
+        "upstream_model": "qwen3.6",
+        "reasoning_effort": "none",
+        "parameters": {},
+        "hidden": false
+      }
+    }
+  ]
+}
